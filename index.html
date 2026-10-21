@@ -61,6 +61,35 @@
     .dock .app-icon { width: 15vw; height: 15vw; }
     .home-indicator { width: 35vw; }
     .status-bar { padding: 16px 20px 0; }
+    
+    /* MOBILE FULLSCREEN FIX */
+@media screen and (max-width: 480px) {
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: #000 !important;
+        overflow: hidden !important; /* Stops scrolling */
+    }
+
+    .iphone-frame {
+        transform: none !important; /* Removes the 0.85 zoom */
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important; /* Fits perfectly behind mobile browser toolbars */
+    }
+
+    .iphone {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important; /* Removes rounded corners */
+        border: none !important; /* Removes the black frame */
+        box-shadow: none !important; /* Removes the shadow */
+    }
+
+    .notch {
+        display: none !important; /* Hides the fake notch */
+    }
+}
 }
 
         .iphone {
