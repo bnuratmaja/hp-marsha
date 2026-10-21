@@ -24,108 +24,52 @@
             transform-origin: center center;
         }
 
-        /* MOBILE: Full screen, no frame */
-@media (max-width: 450px) {
-    body { 
-        background: #000; 
-        margin: 0; 
-        padding: 0; 
-        overflow: hidden; 
-    }
-    .iphone-frame {
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        transform: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-    }
-    .iphone {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-    }
-    .notch { display: none; }
-    
-    /* Scale elements proportionally for mobile */
-    .lock-time { font-size: 22vw; }
-    .lock-date { font-size: 4.5vw; }
-    .key { width: 20vw; height: 20vw; }
-    .key-number { font-size: 8vw; }
-    .key-letters { font-size: 2.5vw; }
-    .keypad { grid-template-columns: repeat(3, 20vw); gap: 4vw; }
-    .app-icon { width: 16vw; height: 16vw; font-size: 8vw; }
-    .dock .app-icon { width: 15vw; height: 15vw; }
-    .home-indicator { width: 35vw; }
-    .status-bar { padding: 16px 20px 0; }
-
-    /* MOBILE FULLSCREEN FIX */
-@media screen and (max-width: 480px) {
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background-color: #000 !important;
-        overflow: hidden !important; /* Stops scrolling */
-    }
-
-    .iphone-frame {
-        transform: none !important; /* Removes the 0.85 zoom */
-        width: 100vw !important;
-        height: 100vh !important;
-        height: 100dvh !important; /* Fits perfectly behind mobile browser toolbars */
-    }
-
-    .iphone {
-        width: 100% !important;
-        height: 100% !important;
-        border-radius: 0 !important; /* Removes rounded corners */
-        border: none !important; /* Removes the black frame */
-        box-shadow: none !important; /* Removes the shadow */
-    }
-
-    .notch {
-        display: none !important; /* Hides the fake notch */
-    }
-}
-/* MOBILE FULLSCREEN FIX */
+        /* MOBILE FULLSCREEN FIX - NO CROPPING */
 @media screen and (max-width: 480px) {
     html, body {
         margin: 0 !important;
         padding: 0 !important;
         background: #000 !important;
-        overflow: hidden !important;
+        overflow: hidden !important; /* Prevents scrolling */
         width: 100% !important;
         height: 100% !important;
-        touch-action: none !important; /* Prevents browser zooming/scrolling */
+        touch-action: none !important; /* Prevents pinch-zoom */
     }
 
     .iphone-frame {
-        width: 100vw !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        transform: none !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-    }
-
-    .iphone {
+        /* 1. Set the exact dimensions of your design */
         width: 390px !important;
         height: 844px !important;
+        
+        /* 2. Center the design on the screen */
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        margin-top: -422px !important; /* Half of 844 */
+        margin-left: -195px !important; /* Half of 390 */
+        
+        /* 3. Scale it down to fit the screen perfectly */
+        transform-origin: center center !important;
+        /* min(1, ...) ensures it never zooms IN on large screens */
+        transform: scale(min(1, calc(100vw / 390), calc(100dvh / 844))) !important;
+        
+        /* 4. Remove desktop styling */
         border-radius: 0 !important;
         border: none !important;
         box-shadow: none !important;
-        /* Scales the entire phone UI to fit perfectly within the mobile screen */
-        transform: scale(calc(min(100vw / 390, 100vh / 844))) !important;
-        transform-origin: center center !important;
+    }
+
+    .iphone {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
     .notch { display: none !important; }
 }
-}
+
 
         .iphone {
             width: 390px; height: 844px;
