@@ -24,15 +24,29 @@
             transform-origin: center center;
         }
 
-        /* MOBILE FULL SCREEN FIX */
+        /* ============ MOBILE FULL SCREEN MODE ============ */
         @media (max-width: 450px) {
-            body { background: #000; margin: 0; padding: 0; overflow: hidden; }
-            .iphone-frame { transform: none; }
-            .iphone {
-                width: 100vw; height: 100vh; height: 100dvh;
-                border-radius: 0; border: none; box-shadow: none;
+            body {
+                background: #000;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
             }
-            .notch { display: none; }
+            .iphone-frame {
+                transform: scale(calc(min(100vw / 390, 100dvh / 844)));
+                transform-origin: center center;
+            }
+            .iphone {
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .notch {
+                display: none;
+            }
+            .status-bar {
+                padding-top: 8px;
+            }
         }
 
         .iphone {
@@ -67,16 +81,6 @@
         .status-icons { display: flex; align-items: center; gap: 6px; }
         .status-icons svg { fill: white; display: block; }
 
-        /* UNIVERSAL HOME BUTTON */
-        .universal-home-btn {
-            position: absolute; top: 55px; left: 15px; z-index: 9999;
-            background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 20px;
-            padding: 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer;
-            display: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        }
-        .universal-home-btn:active { transform: scale(0.95); }
-        .universal-home-btn.visible { display: block; }
-
         .lock-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center;
@@ -93,7 +97,7 @@
         }
         
         .lock-screen.hidden { 
-            transform: translateY(-100%); opacity: 0; pointer-events: none; display: none; 
+            transform: translateY(-100%); opacity: 0; pointer-events: none; 
         }
 
         .lock-content {
@@ -118,23 +122,6 @@
         .lock-bottom {
             position: absolute; bottom: 40px; width: 100%;
             display: flex; flex-direction: column; align-items: center;
-        }
-
-        .lock-buttons {
-            display: flex; justify-content: space-between; width: 82%; margin-bottom: 25px;
-        }
-
-        .lock-btn {
-            width: 50px; height: 50px; border-radius: 50%;
-            background: rgba(0, 0, 0, 0.4);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .lock-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
-        .lock-btn svg { width: 22px; height: 22px; fill: white; }
-
-        .swipe-text { 
-            font-size: 14px; color: white; opacity: 0.8; margin-bottom: 10px; cursor: pointer; 
         }
 
         .home-indicator { 
@@ -242,6 +229,43 @@
             border-radius: 38px; padding: 16px 12px; display: flex; justify-content: space-around; margin-top: 10px;
         }
         .dock .app-icon { width: 60px; height: 60px; border-radius: 16px; box-shadow: none; }
+
+        /* ============ UNIVERSAL HOME BUTTON ============ */
+        .universal-home-btn {
+            position: absolute;
+            top: 50px;
+            left: 12px;
+            z-index: 950;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .universal-home-btn.visible {
+            display: flex;
+            opacity: 1;
+        }
+        .universal-home-btn:active {
+            transform: scale(0.95);
+            background: rgba(0, 0, 0, 0.75);
+        }
+        .universal-home-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
 
         /* ============ PHOTOS APP ============ */
         .photos-app {
@@ -613,13 +637,16 @@
 
     <div class="iphone-frame">
         <div class="iphone" id="iphone">
-            <!-- UNIVERSAL HOME BUTTON -->
-            <button class="universal-home-btn" id="homeBtn" onclick="goHome()">Home</button>
-
             <div class="wallpaper" id="wallpaper">
                 <img id="wallpaperImg" src="" alt="Wallpaper">
             </div>
             <div class="notch"></div>
+
+            <!-- UNIVERSAL HOME BUTTON -->
+            <button class="universal-home-btn" id="universalHomeBtn" onclick="goHome()">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Home
+            </button>
 
             <div class="status-bar">
                 <span class="status-time" id="status-time">00:00</span>
@@ -630,7 +657,7 @@
                 </div>
             </div>
 
-            <!-- LOCK SCREEN -->
+            <!-- LOCK SCREEN (Cleaned up - no swipe text, no flashlight/camera) -->
             <div class="lock-screen" id="lockScreen">
                 <div class="lock-content">
                     <div class="lock-icon-top">
@@ -641,15 +668,6 @@
                 </div>
                 
                 <div class="lock-bottom">
-                    <div class="lock-buttons">
-                        <div class="lock-btn" onclick="haptic(50)">
-                            <svg viewBox="0 0 24 24"><path d="M6 2h12v4h-2V4H8v2H6V2zm0 6h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V8zm4 2v8h4v-8h-4z"/></svg>
-                        </div>
-                        <div class="lock-btn" onclick="haptic(50)">
-                            <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
-                        </div>
-                    </div>
-                    <div class="swipe-text" id="swipeText">Swipe up to open</div>
                     <div class="home-indicator" onclick="handleHomeClick()"></div>
                 </div>
             </div>
@@ -683,6 +701,7 @@
                     <div class="passcode-btn" onclick="cancelPasscode()">Cancel</div>
                     <div class="passcode-btn delete" id="deleteBtn" onclick="deleteNumber()">Delete</div>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px;" onclick="goHome()"></div>
             </div>
 
             <!-- HOME SCREEN -->
@@ -703,6 +722,7 @@
                 <div class="app-grid" id="app-grid"></div>
 
                 <div class="dock" id="dock"></div>
+                <div class="home-indicator" style="margin-top: 10px;" onclick="goHome()"></div>
             </div>
 
             <!-- PHOTOS APP -->
@@ -736,6 +756,7 @@
                         <span>Search</span>
                     </div>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closePhotosApp()"></div>
             </div>
 
             <!-- GEMINI APP -->
@@ -789,6 +810,7 @@
                         </div>
                     </div>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeGeminiApp()"></div>
             </div>
 
             <!-- SAFARI APP -->
@@ -949,6 +971,7 @@
                         <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
                     </button>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeSafariApp()"></div>
             </div>
 
             <!-- NOTES APP -->
@@ -960,9 +983,8 @@
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                     </button>
                 </div>
-                <div class="notes-list" id="notesList">
-                    <!-- Notes will be injected here -->
-                </div>
+                <div class="notes-list" id="notesList"></div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNotesApp()"></div>
             </div>
 
             <!-- NOTE DETAIL VIEW -->
@@ -981,6 +1003,7 @@
                     <div class="note-detail-date" id="noteDetailDate"></div>
                     <div class="note-detail-body" id="noteDetailBody"></div>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNoteDetail()"></div>
             </div>
 
             <!-- PHOTO VIEWER -->
@@ -1002,6 +1025,7 @@
                     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(255,255,255,0.5);" onclick="closePhotoViewer()"></div>
             </div>
         </div>
     </div>
@@ -1158,7 +1182,13 @@
             handleSwipe(diff);
         });
 
-        document.getElementById('swipeText').addEventListener('click', () => { haptic(50); showPasscode(); });
+        // Click anywhere on lock screen to unlock (since swipe text is removed)
+        lockScreen.addEventListener('click', (e) => {
+            if (!lockScreen.classList.contains('hidden') && !lockScreen.classList.contains('blurred')) {
+                haptic(50);
+                showPasscode();
+            }
+        });
 
         function showPasscode() {
             haptic(50);
@@ -1213,9 +1243,25 @@
             }
         }
 
+        // ============ UNIVERSAL HOME BUTTON LOGIC ============
+        function updateHomeButton() {
+            const homeBtn = document.getElementById('universalHomeBtn');
+            const anyAppOpen = document.getElementById('photosApp').classList.contains('active') ||
+                              document.getElementById('geminiApp').classList.contains('active') ||
+                              document.getElementById('safariApp').classList.contains('active') ||
+                              document.getElementById('notesApp').classList.contains('active') ||
+                              document.getElementById('noteDetail').classList.contains('active') ||
+                              document.getElementById('photoViewer').classList.contains('active');
+            
+            if (anyAppOpen) {
+                homeBtn.classList.add('visible');
+            } else {
+                homeBtn.classList.remove('visible');
+            }
+        }
+
         function goHome() {
             haptic(30);
-            hideHomeBtn();
             document.getElementById('homeScreen').classList.remove('active');
             document.getElementById('photosApp').classList.remove('active');
             document.getElementById('geminiApp').classList.remove('active');
@@ -1228,25 +1274,25 @@
             wallpaper.classList.remove('blurred');
             lockScreen.classList.remove('blurred');
             passcodeInput = ""; updateDots();
+            updateHomeButton();
         }
 
         function handleHomeClick() {
             if (!lockScreen.classList.contains('hidden')) { haptic(50); showPasscode(); }
         }
 
-        function showHomeBtn() { document.getElementById('homeBtn').classList.add('visible'); }
-        function hideHomeBtn() { document.getElementById('homeBtn').classList.remove('visible'); }
-
         // ============ PHOTOS APP FUNCTIONS ============
         function openPhotosApp() {
-            haptic(50); showHomeBtn();
+            haptic(50);
             document.getElementById('photosApp').classList.add('active');
             loadPhotos();
+            updateHomeButton();
         }
 
         function closePhotosApp() {
-            haptic(30); hideHomeBtn();
+            haptic(30);
             document.getElementById('photosApp').classList.remove('active');
+            updateHomeButton();
         }
 
         function loadPhotos() {
@@ -1269,17 +1315,20 @@
             haptic(30);
             document.getElementById('viewerImage').src = photoSrc;
             document.getElementById('photoViewer').classList.add('active');
+            updateHomeButton();
         }
 
         function closePhotoViewer() {
             haptic(30);
             document.getElementById('photoViewer').classList.remove('active');
+            updateHomeButton();
         }
 
         // ============ GEMINI APP FUNCTIONS ============
         function openGeminiApp() {
-            haptic(50); showHomeBtn();
+            haptic(50);
             document.getElementById('geminiApp').classList.add('active');
+            updateHomeButton();
             setTimeout(() => {
                 const chat = document.querySelector('.gemini-chat');
                 chat.scrollTop = chat.scrollHeight;
@@ -1287,32 +1336,37 @@
         }
 
         function closeGeminiApp() {
-            haptic(30); hideHomeBtn();
+            haptic(30);
             document.getElementById('geminiApp').classList.remove('active');
+            updateHomeButton();
         }
 
         // ============ SAFARI APP FUNCTIONS ============
         function openSafariApp() {
-            haptic(50); showHomeBtn();
+            haptic(50);
             document.getElementById('safariApp').classList.add('active');
+            updateHomeButton();
         }
 
         function closeSafariApp() {
-            haptic(30); hideHomeBtn();
+            haptic(30);
             document.getElementById('safariApp').classList.remove('active');
+            updateHomeButton();
         }
 
         // ============ NOTES APP FUNCTIONS ============
         function openNotesApp() {
-            haptic(50); showHomeBtn();
+            haptic(50);
             document.getElementById('notesApp').classList.add('active');
+            updateHomeButton();
             loadNotesList();
         }
 
         function closeNotesApp() {
-            haptic(30); hideHomeBtn();
+            haptic(30);
             document.getElementById('notesApp').classList.remove('active');
             document.getElementById('noteDetail').classList.remove('active');
+            updateHomeButton();
         }
 
         function loadNotesList() {
@@ -1343,11 +1397,13 @@
             document.getElementById('noteDetailDate').textContent = note.date;
             document.getElementById('noteDetailBody').textContent = note.content;
             document.getElementById('noteDetail').classList.add('active');
+            updateHomeButton();
         }
 
         function closeNoteDetail() {
             haptic(30);
             document.getElementById('noteDetail').classList.remove('active');
+            updateHomeButton();
         }
 
         function generateCalendar() {
