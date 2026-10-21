@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Marsha's iPhone</title>
     <style>
         * { 
@@ -24,27 +24,42 @@
             transform-origin: center center;
         }
 
-        /* PERFECT MOBILE FIT - Scales the phone to fit any screen */
+        /* PERFECT NATIVE MOBILE FIT - No blurry scaling, instant full screen */
         @media (max-width: 450px) {
             body { 
                 background: #000; 
                 margin: 0; padding: 0; 
                 overflow: hidden; 
                 width: 100vw; 
-                height: 100vh; 
-                height: 100dvh;
+                height: 100vh;
+                height: 100dvh; /* Dynamic viewport height for mobile browsers */
+                touch-action: none; /* Prevents pull-to-refresh and weird scrolling */
             }
             .iphone-frame {
-                position: absolute;
-                top: 50%; left: 50%;
-                /* Mathematically scales the 390x844 phone to fit the screen perfectly */
-                transform: translate(-50%, -50%) scale(min(100vw / 390, 100dvh / 844));
-                transform-origin: center center;
+                width: 100%;
+                height: 100%;
+                transform: none !important; /* Completely disable desktop scaling */
+                position: relative;
             }
             .iphone {
-                border-radius: 0; border: none; box-shadow: none;
+                width: 100%;
+                height: 100%;
+                border-radius: 0; 
+                border: none; 
+                box-shadow: none;
             }
             .notch { display: none; }
+            
+            /* Responsive sizing so nothing overflows on narrow screens */
+            .lock-time { font-size: min(86px, 22vw); }
+            .lock-date { font-size: min(17px, 4.5vw); }
+            .key { width: min(78px, 20vw); height: min(78px, 20vw); }
+            .key-number { font-size: min(32px, 8vw); }
+            .key-letters { font-size: min(9px, 2.5vw); }
+            .keypad { grid-template-columns: repeat(3, min(78px, 20vw)); gap: min(18px, 4vw); }
+            .app-icon { width: min(62px, 16vw); height: min(62px, 16vw); font-size: min(32px, 8vw); }
+            .dock .app-icon { width: min(60px, 15vw); height: min(60px, 15vw); }
+            .home-indicator { width: min(134px, 35vw); }
         }
 
         .iphone {
@@ -595,7 +610,6 @@
                 <div class="status-icons">
                     <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity="0.3"/></svg>
                     <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/><path d="M8 6a5.5 5.5 0 00-5.5 5.5h2A3.5 3.5 0 018 8a3.5 3.5 0 013.5 3.5h2A5.5 5.5 0 008 6z"/><path d="M8 2.5a9 9 0 00-9 9h2a7 7 0 017-7 7 7 0 017 7h2a9 9 0 00-9-9z"/></svg>
-                    <!-- BATTERY WITH PERCENTAGE INSIDE -->
                     <svg width="28" height="13" viewBox="0 0 28 13">
                         <rect x="0.5" y="0.5" width="24" height="12" rx="3.5" stroke="#FF9F0A" fill="none" stroke-width="1"/>
                         <rect x="2.5" y="2.5" width="10" height="8" rx="2" fill="#FF9F0A"/>
@@ -794,10 +808,7 @@
                         <div class="bbc-logo">BBC NEWS</div>
                         <h1 class="bbc-headline">Dua tahun Prabowo-Gibran – Warga terpaksa 'downgrade' hidup, untuk makan saja pas-pasan</h1>
                         <div class="bbc-meta">
-
-<img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
-
-
+                            <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
                             <strong>Riana A Ibrahim</strong><br>
                             Peranan, Jurnalis BBC News Indonesia<br>
                             Telah diterbitkan<br>
@@ -932,7 +943,6 @@
             <!-- NOTES APP -->
             <div class="notes-app" id="notesApp">
                 <div class="notes-header">
-                    <!-- CHANGED TO HOME BUTTON -->
                     <button class="notes-header-btn" onclick="goHome()">
                         <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
                         Home
@@ -942,15 +952,12 @@
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                     </button>
                 </div>
-                <div class="notes-list" id="notesList">
-                    <!-- Notes will be injected here -->
-                </div>
+                <div class="notes-list" id="notesList"></div>
             </div>
 
             <!-- NOTE DETAIL VIEW -->
             <div class="note-detail" id="noteDetail">
                 <div class="note-detail-header">
-                    <!-- CHANGED TO BACK BUTTON -->
                     <button class="note-detail-back" onclick="closeNoteDetail()">
                         <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
                         Back
@@ -991,77 +998,19 @@
 
     <script>
         const NOTES_DATA = [
-            {
-                title: "shampoo buat ngembangin rambut",
-                content: "dari twitter\n\nmarsha oshi = aku? jadi duta shampoo lain???\nbass = udah lebat banget katanya\nara = diane, varian sesuai kebutuhan\nmaarukyuu  = lepas extension kah??\npandu = tanya ekin\nkalkunsenang =\n1. Rosemary Oil & Minyak kemiri bakar (selang seling aja pakenya)\n3. Hair growth shampoo (aku selang seling miranda sm kerastase)\n4. Absolut repair serum l’oreal\n5. Kerastase genesis serum\n(mana nomor 2 nya wkwk)",
-                date: "Oct 21, 2026"
-            },
-            {
-                title: "situs manga online",
-                content: "comix mangadot atsumaru mangaball mangafire weebcentral mangago onisaga toonkotsu",
-                date: "Oct 20, 2026"
-            },
-            {
-                title: "marah besar",
-                content: "1.nachia\n3.messi\n3.ka indah\nSIAPA LAGI YANG MAU SAKITIN DEDEK",
-                date: "Oct 19, 2026"
-            },
-            {
-                title: "cara mindahin foto dari digicam",
-                content: "gimana ya wkwkwk",
-                date: "Oct 18, 2026"
-            }
+            { title: "shampoo buat ngembangin rambut", content: "dari twitter\n\nmarsha oshi = aku? jadi duta shampoo lain???\nbass = udah lebat banget katanya\nara = diane, varian sesuai kebutuhan\nmaarukyuu  = lepas extension kah??\npandu = tanya ekin\nkalkunsenang =\n1. Rosemary Oil & Minyak kemiri bakar (selang seling aja pakenya)\n3. Hair growth shampoo (aku selang seling miranda sm kerastase)\n4. Absolut repair serum l’oreal\n5. Kerastase genesis serum\n(mana nomor 2 nya wkwk)", date: "Oct 21, 2026" },
+            { title: "situs manga online", content: "comix mangadot atsumaru mangaball mangafire weebcentral mangago onisaga toonkotsu", date: "Oct 20, 2026" },
+            { title: "marah besar", content: "1.nachia\n3.messi\n3.ka indah\nSIAPA LAGI YANG MAU SAKITIN DEDEK", date: "Oct 19, 2026" },
+            { title: "cara mindahin foto dari digicam", content: "gimana ya wkwkwk", date: "Oct 18, 2026" }
         ];
 
         const SETTINGS = {
             passcode: "0109",
             wallpaper: "images/wallpaper.jpg",
             weather: { city: "Jakarta", temp: 31, description: "Mostly Sunny" },
-            
             photos: [
-"https://pbs.twimg.com/media/HT3gNSTawAA9osk?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HS93NIWasAA_qhq?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HSY2PXGbcAAP3KB?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HSBO--fbEAEbLOP?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRwmss8bQAAO0o0?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRtL6nZbgAAKB2q?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRcNXK7bkAA_jMX?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRR9yK6aAAAN3yW?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRRrO4uaMAAcyQB?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HRJMgEIa4AApXXn?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HQ1FqnVa8AA2Eqn?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HQymw7AaMAAS_MD?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HQK9qKIbkAAN-6Q?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HPR70iybQAAGWDK?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HPMPRvdbcAAhUX9?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HPHh1awasAAFu_5?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HPDRXE9boAAGvSI?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HO3kXLsawAAMPFr?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HOEN4r6bMAAnIcb?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HNG0_G3aYAIeX0P?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HNGz8GHbwAApqb1?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HMwNETqbIAADiZf?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HMuDj2pbgAA0Mnj?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HMpO3x4boAAy3li?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HMEr6V9W0AAnGZ9?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HLwO9-bbgAI4eT9?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HKtcem1asAE1_Zz?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HJppBIhbwAEDNZb?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HJe0_tmbgAAmsaC?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HJEoWMiaQAAPfbW?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HImK9BXa8AAVZ0l?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HIIQNDqacAAc4dZ?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HHO8_wMaAAA-lzD?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HHMcDIBawAAvd9E?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGwxYbNbgAA5EhE?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGgXTqmbMAAnbqw?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGbZ5RWbgAA_5rJ?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGUHnNcagAItMme?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGLM-Q6bUAAcfp-?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HGKmsKpboAAX0s4?format=jpg&name=4096x4096",
-"https://pbs.twimg.com/media/HF12mjNasAALy7k?format=jpg&name=4096x4096"
+                "https://pbs.twimg.com/media/HT3gNSTawAA9osk?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HS93NIWasAA_qhq?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HSY2PXGbcAAP3KB?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HSBO--fbEAEbLOP?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRwmss8bQAAO0o0?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRtL6nZbgAAKB2q?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRcNXK7bkAA_jMX?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRR9yK6aAAAN3yW?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRRrO4uaMAAcyQB?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HRJMgEIa4AApXXn?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HQ1FqnVa8AA2Eqn?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HQymw7AaMAAS_MD?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HQK9qKIbkAAN-6Q?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HPR70iybQAAGWDK?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HPMPRvdbcAAhUX9?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HPHh1awasAAFu_5?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HPDRXE9boAAGvSI?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HO3kXLsawAAMPFr?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HOEN4r6bMAAnIcb?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HNG0_G3aYAIeX0P?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HNGz8GHbwAApqb1?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HMwNETqbIAADiZf?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HMuDj2pbgAA0Mnj?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HMpO3x4boAAy3li?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HMEr6V9W0AAnGZ9?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HLwO9-bbgAI4eT9?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HKtcem1asAE1_Zz?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HJppBIhbwAEDNZb?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HJe0_tmbgAAmsaC?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HJEoWMiaQAAPfbW?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HImK9BXa8AAVZ0l?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HIIQNDqacAAc4dZ?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HHO8_wMaAAA-lzD?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HHMcDIBawAAvd9E?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGwxYbNbgAA5EhE?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGgXTqmbMAAnbqw?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGbZ5RWbgAA_5rJ?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGUHnNcagAItMme?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGLM-Q6bUAAcfp-?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HGKmsKpboAAX0s4?format=jpg&name=4096x4096", "https://pbs.twimg.com/media/HF12mjNasAALy7k?format=jpg&name=4096x4096"
             ],
-            
             apps: [
                 { name: "WhatsApp", icon: "<img src='images/whatsapp.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
                 { name: "Gemini", icon: "<img src='images/gemini.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "gemini" },
@@ -1226,7 +1175,6 @@
             const now = new Date();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             document.getElementById('photosSectionHeader').textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-
             const grid = document.getElementById('photosGrid');
             grid.innerHTML = '';
             SETTINGS.photos.forEach((photo) => {
@@ -1258,18 +1206,9 @@
             }, 450);
         }
 
-        function openSafariApp() {
-            haptic(50);
-            document.getElementById('safariApp').classList.add('active');
-        }
+        function openSafariApp() { haptic(50); document.getElementById('safariApp').classList.add('active'); }
+        function openNotesApp() { haptic(50); document.getElementById('notesApp').classList.add('active'); loadNotesList(); }
 
-        function openNotesApp() {
-            haptic(50);
-            document.getElementById('notesApp').classList.add('active');
-            loadNotesList();
-        }
-
-        // ADDED FUNCTION TO GO BACK TO NOTES LIST
         function closeNoteDetail() {
             haptic(30);
             document.getElementById('noteDetail').classList.remove('active');
@@ -1282,16 +1221,8 @@
                 const item = document.createElement('div');
                 item.className = 'note-item';
                 item.onclick = () => openNoteDetail(index);
-                
                 const snippet = note.content.split('\n')[0] + (note.content.includes('\n') ? '...' : '');
-                
-                item.innerHTML = `
-                    <div class="note-item-content">
-                        <div class="note-item-title">${note.title}</div>
-                        <div class="note-item-snippet">${snippet}</div>
-                    </div>
-                    <div class="note-item-date">${note.date}</div>
-                `;
+                item.innerHTML = `<div class="note-item-content"><div class="note-item-title">${note.title}</div><div class="note-item-snippet">${snippet}</div></div><div class="note-item-date">${note.date}</div>`;
                 list.appendChild(item);
             });
         }
@@ -1310,7 +1241,6 @@
             const year = date.getFullYear(), month = date.getMonth(), today = date.getDate();
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             document.getElementById('cal-month').textContent = monthNames[month];
-            
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const daysInPrevMonth = new Date(year, month, 0).getDate();
@@ -1326,7 +1256,6 @@
         function generateApps() {
             const appGrid = document.getElementById('app-grid');
             const dock = document.getElementById('dock');
-            
             const createAppHTML = (app) => {
                 let iconContent = app.icon;
                 if (app.showDate) {
@@ -1335,19 +1264,13 @@
                     iconContent = `<div style="text-align:center; color:#000;"><div style="font-size:10px; color:#ff3b30; font-weight:600;">${dayName}</div><div style="font-size:24px; font-weight:600;">${today}</div></div>`;
                 }
                 const badge = app.badge ? `<div class="app-badge">${app.badge}</div>` : '';
-                
                 let clickHandler = `haptic(50); alert('Opening ${app.name}...')`;
                 if (app.action === 'photos') clickHandler = 'openPhotosApp()';
                 else if (app.action === 'gemini') clickHandler = 'openGeminiApp()';
                 else if (app.action === 'safari') clickHandler = 'openSafariApp()';
                 else if (app.action === 'notes') clickHandler = 'openNotesApp()';
-                
-                return `<div class="app" onclick="${clickHandler}">
-                    <div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div>
-                    <div class="app-name">${app.name}</div>
-                </div>`;
+                return `<div class="app" onclick="${clickHandler}"><div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div><div class="app-name">${app.name}</div></div>`;
             };
-
             appGrid.innerHTML = SETTINGS.apps.map(createAppHTML).join('');
             dock.innerHTML = SETTINGS.dockApps.map(createAppHTML).join('');
         }
