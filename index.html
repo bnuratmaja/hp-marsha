@@ -25,51 +25,39 @@
         }
 
         /* MOBILE FULLSCREEN FIX - NO CROPPING */
-@media screen and (max-width: 480px) {
-    html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #000 !important;
-        overflow: hidden !important; /* Prevents scrolling */
-        width: 100% !important;
-        height: 100% !important;
-        touch-action: none !important; /* Prevents pinch-zoom */
-    }
-
-    .iphone-frame {
-        /* 1. Set the exact dimensions of your design */
-        width: 390px !important;
-        height: 844px !important;
-        
-        /* 2. Center the design on the screen */
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        margin-top: -422px !important; /* Half of 844 */
-        margin-left: -195px !important; /* Half of 390 */
-        
-        /* 3. Scale it down to fit the screen perfectly */
-        transform-origin: center center !important;
-        /* min(1, ...) ensures it never zooms IN on large screens */
-        transform: scale(min(1, calc(100vw / 390), calc(100dvh / 844))) !important;
-        
-        /* 4. Remove desktop styling */
-        border-radius: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    .iphone {
-        width: 100% !important;
-        height: 100% !important;
-        border-radius: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    .notch { display: none !important; }
-}
-
+        @media screen and (max-width: 480px) {
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #000 !important;
+                overflow: hidden !important;
+                width: 100% !important;
+                height: 100% !important;
+                touch-action: none !important;
+            }
+            .iphone-frame {
+                width: 390px !important;
+                height: 844px !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                margin-top: -422px !important;
+                margin-left: -195px !important;
+                transform-origin: center center !important;
+                transform: scale(min(1, calc(100vw / 390), calc(100dvh / 844))) !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .iphone {
+                width: 100% !important;
+                height: 100% !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .notch { display: none !important; }
+        }
 
         .iphone {
             width: 390px; height: 844px;
@@ -270,7 +258,7 @@
         .dock .app-icon { width: 60px; height: 60px; border-radius: 16px; box-shadow: none; }
 
         /* ============ APPS (SLICK TRANSITIONS) ============ */
-        .photos-app, .gemini-app, .safari-app, .notes-app, .note-detail {
+        .photos-app, .gemini-app, .safari-app, .notes-app, .note-detail, .camera-app {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 700;
             display: flex; flex-direction: column;
@@ -279,14 +267,13 @@
             overflow: hidden;
             color: #000;
         }
-        .photos-app.active, .gemini-app.active, .safari-app.active, .notes-app.active, .note-detail.active { 
+        .photos-app.active, .gemini-app.active, .safari-app.active, .notes-app.active, .note-detail.active, .camera-app.active { 
             transform: translateY(0) scale(1); 
         }
         .note-detail { z-index: 710; }
 
         /* ============ PHOTOS APP ============ */
         .photos-app { background: #FFFFFF; }
-
         .photos-nav-bar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 50px 15px 10px;
@@ -302,7 +289,6 @@
         }
         .nav-btn:active { opacity: 0.6; }
         .nav-title { font-size: 17px; font-weight: 600; color: #000; }
-        
         .photos-section-header {
             font-size: 20px; font-weight: 700; color: #000;
             padding: 12px 15px;
@@ -310,7 +296,6 @@
             position: sticky; top: 95px; 
             z-index: 15;
         }
-
         .photos-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -329,7 +314,6 @@
             transition: opacity 0.15s;
         }
         .photo-thumb:active { opacity: 0.7; }
-
         .photos-tab-bar {
             position: absolute; bottom: 0; width: 100%;
             background: rgba(255, 255, 255, 0.9);
@@ -349,7 +333,6 @@
 
         /* ============ GEMINI APP ============ */
         .gemini-app { background: #FFFFFF; }
-
         .gemini-header {
             display: flex; align-items: center; gap: 10px;
             padding: 50px 15px 12px;
@@ -362,17 +345,14 @@
         }
         .gemini-back svg { width: 24px; height: 24px; fill: #5F6368; }
         .gemini-title { font-size: 20px; font-weight: 500; color: #5F6368; }
-
         .gemini-chat {
             flex: 1; overflow-y: auto; padding: 20px 16px;
             display: flex; flex-direction: column; gap: 24px;
             scroll-behavior: smooth;
         }
-
         .chat-msg { display: flex; gap: 12px; max-width: 92%; }
         .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
         .chat-msg.ai { align-self: flex-start; }
-
         .chat-avatar {
             width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
@@ -383,7 +363,6 @@
             background: conic-gradient(from 180deg at 50% 50%, #4285F4, #9B72CB, #D96570, #4285F4);
         }
         .chat-avatar.gemini-av svg { width: 18px; height: 18px; fill: white; }
-
         .chat-bubble {
             padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.55;
         }
@@ -395,7 +374,6 @@
         }
         .chat-msg.ai .chat-bubble strong { font-weight: 600; color: #000; }
         .chat-msg.ai .chat-bubble br { margin-bottom: 8px; }
-
         .gemini-input-area {
             padding: 12px 16px 25px;
             background: #FFFFFF;
@@ -415,7 +393,6 @@
 
         /* ============ SAFARI APP ============ */
         .safari-app { background: #F2F2F7; }
-
         .safari-top-bar {
             display: flex; align-items: center; gap: 12px;
             padding: 50px 12px 10px;
@@ -427,7 +404,6 @@
         }
         .safari-nav-btn.disabled svg { fill: #C7C7CC; }
         .safari-nav-btn svg { width: 22px; height: 22px; fill: #007AFF; }
-        
         .safari-url-bar {
             flex: 1; background: #FFFFFF; border-radius: 10px;
             padding: 8px 12px; font-size: 15px; color: #000;
@@ -436,64 +412,36 @@
         }
         .safari-url-bar svg { width: 14px; height: 14px; fill: #8E8E93; }
         .safari-url-text { color: #000; font-weight: 400; }
-
-        .safari-content {
-            flex: 1; overflow-y: auto; background: #FFFFFF;
-        }
-
-        .bbc-article {
-            padding: 20px 16px 40px;
-            font-family: "ReithSerif", "Georgia", serif;
-        }
+        .safari-content { flex: 1; overflow-y: auto; background: #FFFFFF; }
+        .bbc-article { padding: 20px 16px 40px; font-family: "ReithSerif", "Georgia", serif; }
         .bbc-logo {
             background: #B80000; color: white; font-family: sans-serif;
             font-weight: 700; font-size: 18px; padding: 4px 8px;
             display: inline-block; margin-bottom: 15px; letter-spacing: -1px;
         }
-        .bbc-headline {
-            font-size: 28px; font-weight: 700; line-height: 1.2;
-            color: #111; margin-bottom: 12px;
-        }
-        .bbc-meta {
-            font-family: -apple-system, sans-serif; font-size: 13px; color: #505050;
-            margin-bottom: 20px; line-height: 1.5;
-        }
+        .bbc-headline { font-size: 28px; font-weight: 700; line-height: 1.2; color: #111; margin-bottom: 12px; }
+        .bbc-meta { font-family: -apple-system, sans-serif; font-size: 13px; color: #505050; margin-bottom: 20px; line-height: 1.5; }
         .bbc-meta strong { color: #111; }
-        .bbc-intro {
-            font-size: 18px; font-weight: 600; line-height: 1.5;
-            color: #111; margin-bottom: 20px;
-        }
-        .bbc-image {
-            width: 100%; border-radius: 4px; margin: 20px 0 8px;
-        }
-        .bbc-text {
-            font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 20px;
-        }
-        .bbc-subtitle {
-            font-size: 22px; font-weight: 700; color: #111;
-            margin: 30px 0 15px; line-height: 1.3;
-        }
+        .bbc-intro { font-size: 18px; font-weight: 600; line-height: 1.5; color: #111; margin-bottom: 20px; }
+        .bbc-image { width: 100%; border-radius: 4px; margin: 20px 0 8px; }
+        .bbc-text { font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 20px; }
+        .bbc-subtitle { font-size: 22px; font-weight: 700; color: #111; margin: 30px 0 15px; line-height: 1.3; }
         .bbc-quote {
             font-size: 18px; font-style: italic; color: #333;
             border-left: 3px solid #B80000; padding-left: 15px;
             margin: 20px 0; line-height: 1.5;
         }
-
         .safari-bottom-bar {
-            background: #F2F2F7;
-            border-top: 1px solid #D1D1D6;
+            background: #F2F2F7; border-top: 1px solid #D1D1D6;
             display: flex; justify-content: space-around; align-items: center;
             padding: 10px 0 25px;
         }
-        .safari-bottom-btn {
-            background: none; border: none; cursor: pointer; padding: 8px;
-        }
+        .safari-bottom-btn { background: none; border: none; cursor: pointer; padding: 8px; }
         .safari-bottom-btn.disabled svg { fill: #C7C7CC; }
         .safari-bottom-btn svg { width: 24px; height: 24px; fill: #007AFF; }
 
         /* ============ NOTES APP ============ */
         .notes-app { background: #F2F2F7; }
-
         .notes-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 50px 16px 10px;
@@ -506,31 +454,21 @@
         }
         .notes-header-btn:active { opacity: 0.6; }
         .notes-header-title { font-size: 17px; font-weight: 600; color: #000; }
-
-        .notes-list {
-            flex: 1; overflow-y: auto; padding: 0 16px 30px;
-        }
+        .notes-list { flex: 1; overflow-y: auto; padding: 0 16px 30px; }
         .note-item {
-            background: #FFFFFF;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            cursor: pointer;
-            transition: background 0.15s;
+            background: #FFFFFF; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            cursor: pointer; transition: background 0.15s;
         }
         .note-item:active { background: #E5E5EA; }
         .note-item-content { flex: 1; margin-right: 10px; }
         .note-item-title { font-size: 17px; font-weight: 600; color: #000; margin-bottom: 4px; }
-        .note-item-snippet { font-size: 15px; color: #8E8E93; line-height: 1.3; 
+        .note-item-snippet { 
+            font-size: 15px; color: #8E8E93; line-height: 1.3; 
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
         }
         .note-item-date { font-size: 15px; color: #8E8E93; white-space: nowrap; margin-top: 2px; }
-
         .note-detail { background: #FFFFFF; }
-
         .note-detail-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 50px 16px 10px;
@@ -542,24 +480,12 @@
             cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 400;
         }
         .note-detail-back:active { opacity: 0.6; }
-        .note-detail-share {
-            background: none; border: none; cursor: pointer;
-        }
+        .note-detail-share { background: none; border: none; cursor: pointer; }
         .note-detail-share svg { width: 22px; height: 22px; fill: #007AFF; }
-
-        .note-detail-content {
-            flex: 1; overflow-y: auto; padding: 20px 20px 40px;
-            background: #FFFFFF;
-        }
-        .note-detail-title {
-            font-size: 24px; font-weight: 700; color: #000; margin-bottom: 8px; line-height: 1.2;
-        }
-        .note-detail-date {
-            font-size: 13px; color: #8E8E93; margin-bottom: 20px;
-        }
-        .note-detail-body {
-            font-size: 17px; line-height: 1.5; color: #000; white-space: pre-wrap; word-wrap: break-word;
-        }
+        .note-detail-content { flex: 1; overflow-y: auto; padding: 20px 20px 40px; background: #FFFFFF; }
+        .note-detail-title { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 8px; line-height: 1.2; }
+        .note-detail-date { font-size: 13px; color: #8E8E93; margin-bottom: 20px; }
+        .note-detail-body { font-size: 17px; line-height: 1.5; color: #000; white-space: pre-wrap; word-wrap: break-word; }
 
         /* ============ PHOTO VIEWER ============ */
         .photo-viewer {
@@ -570,7 +496,6 @@
             transition: opacity 0.3s ease;
         }
         .photo-viewer.active { opacity: 1; pointer-events: all; }
-
         .viewer-top-bar {
             position: absolute; top: 0; left: 0; width: 100%;
             padding: 55px 20px 15px;
@@ -585,13 +510,7 @@
         .viewer-back-btn:active { opacity: 0.6; }
         .viewer-top-actions { display: flex; gap: 20px; }
         .viewer-top-actions svg { width: 22px; height: 22px; fill: #0a84ff; cursor: pointer; }
-
-        .viewer-image {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            background: #000;
-        }
-
+        .viewer-image { width: 100%; height: 100%; object-fit: contain; background: #000; }
         .viewer-bottom-bar {
             position: absolute; bottom: 0; left: 0; width: 100%;
             padding: 15px 20px 30px;
@@ -600,6 +519,55 @@
             z-index: 10;
         }
         .viewer-bottom-bar svg { width: 24px; height: 24px; fill: #0a84ff; cursor: pointer; }
+
+        /* ============ CAMERA APP ============ */
+        .camera-app {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 700;
+            display: flex; flex-direction: column;
+            transform: translateY(100%) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            overflow: hidden;
+        }
+        .camera-app.active { transform: translateY(0) scale(1); }
+        .camera-viewfinder {
+            flex: 1; position: relative; width: 100%; height: 100%;
+            background: #000;
+        }
+        .camera-viewfinder video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .camera-ui-top, .camera-ui-bottom {
+            position: absolute; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 20px 20px;
+            color: #FFD60A;
+            font-size: 12px; font-weight: 600;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .camera-ui-top { top: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent); }
+        .camera-ui-bottom { bottom: 0; flex-direction: column; gap: 20px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding-bottom: 40px;}
+        .camera-icon { font-size: 18px; color: #FFF; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .camera-modes { display: flex; gap: 15px; font-size: 13px; color: #FFF; }
+        .camera-modes .mode { opacity: 0.6; }
+        .camera-modes .mode.active { color: #FFD60A; opacity: 1; font-weight: 700; }
+        .camera-shutter-outer {
+            width: 70px; height: 70px; border-radius: 50%;
+            border: 4px solid #FFF; display: flex; justify-content: center; align-items: center;
+        }
+        .camera-shutter-inner { width: 58px; height: 58px; border-radius: 50%; background: #FFF; }
+        .camera-gallery-thumb { width: 40px; height: 40px; background: #333; border-radius: 6px; border: 1px solid #FFF; }
+        .camera-home-btn {
+            position: absolute; top: 50px; left: 15px; z-index: 20;
+            background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 20px;
+            padding: 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 4px;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+        .camera-home-btn:active { opacity: 0.6; }
 
         .vibrate { animation: vibrate 0.1s; }
         @keyframes vibrate { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-1px, 0); } 75% { transform: translate(1px, 0); } }
@@ -637,7 +605,6 @@
                     <div class="lock-date" id="lock-date">Monday, January 1</div>
                     <div class="lock-time" id="lock-time">00:00</div>
                 </div>
-                
                 <div class="lock-bottom">
                     <div class="lock-buttons">
                         <div class="lock-btn" onclick="haptic(50)">
@@ -661,7 +628,6 @@
                     <div class="passcode-dot" id="dot3"></div>
                     <div class="passcode-dot" id="dot4"></div>
                 </div>
-                
                 <div class="keypad">
                     <div class="key" onclick="enterNumber(1)"><div class="key-number">1</div></div>
                     <div class="key" onclick="enterNumber(2)"><div class="key-number">2</div><div class="key-letters">ABC</div></div>
@@ -676,7 +642,6 @@
                     <div class="key" onclick="enterNumber(0)"><div class="key-number">0</div></div>
                     <div class="key" onclick="deleteNumber()"><div class="key-number" style="font-size: 24px;"></div></div>
                 </div>
-                
                 <div class="passcode-footer">
                     <div class="passcode-btn" onclick="cancelPasscode()">Cancel</div>
                     <div class="passcode-btn delete" id="deleteBtn" onclick="deleteNumber()">Delete</div>
@@ -697,9 +662,7 @@
                         <div class="cal-grid" id="cal-grid"></div>
                     </div>
                 </div>
-
                 <div class="app-grid" id="app-grid"></div>
-
                 <div class="dock" id="dock"></div>
             </div>
 
@@ -707,32 +670,18 @@
             <div class="photos-app" id="photosApp">
                 <div class="photos-nav-bar">
                     <button class="nav-btn" onclick="goHome()">
-                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Home
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg> Home
                     </button>
                     <div class="nav-title">Recents</div>
                     <button class="nav-btn">Select</button>
                 </div>
                 <div class="photos-section-header" id="photosSectionHeader">Month Year</div>
                 <div class="photos-grid" id="photosGrid"></div>
-                
                 <div class="photos-tab-bar">
-                    <div class="tab-item">
-                        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v8H8V8z"/></svg>
-                        <span>Library</span>
-                    </div>
-                    <div class="tab-item">
-                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <span>For You</span>
-                    </div>
-                    <div class="tab-item active">
-                        <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h8v4H8v-4z"/></svg>
-                        <span>Albums</span>
-                    </div>
-                    <div class="tab-item">
-                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                        <span>Search</span>
-                    </div>
+                    <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v4H8V8z"/></svg><span>Library</span></div>
+                    <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>For You</span></div>
+                    <div class="tab-item active"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h8v4H8v-4z"/></svg><span>Albums</span></div>
+                    <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><span>Search</span></div>
                 </div>
             </div>
 
@@ -740,12 +689,10 @@
             <div class="gemini-app" id="geminiApp">
                 <div class="gemini-header">
                     <button class="gemini-back" onclick="goHome()">
-                        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-                        Home
+                        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> Home
                     </button>
                     <div class="gemini-title" style="margin-left: auto; margin-right: auto; transform: translateX(-20px);">Gemini</div>
                 </div>
-                
                 <div class="gemini-chat">
                     <div class="chat-msg user">
                         <div class="chat-avatar user-av">M</div>
@@ -776,16 +723,11 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="gemini-input-area">
                     <div class="gemini-input">Ask me anything...</div>
                     <div class="gemini-actions">
-                        <div class="gemini-action-btn">
-                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                        </div>
-                        <div class="gemini-action-btn">
-                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                        </div>
+                        <div class="gemini-action-btn"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></div>
+                        <div class="gemini-action-btn"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
                     </div>
                 </div>
             </div>
@@ -794,35 +736,23 @@
             <div class="safari-app" id="safariApp">
                 <div class="safari-top-bar">
                     <button class="safari-nav-btn" onclick="goHome()" style="display:flex; align-items:center; gap:4px; color:#007AFF; font-size:17px;">
-                        <svg viewBox="0 0 24 24" style="width:22px; height:22px; fill:#007AFF;"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                        Home
+                        <svg viewBox="0 0 24 24" style="width:22px; height:22px; fill:#007AFF;"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg> Home
                     </button>
                     <div class="safari-url-bar">
                         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
                         <span class="safari-url-text">bbc.com</span>
                     </div>
-                    <button class="safari-nav-btn">
-                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                    </button>
-                    <button class="safari-nav-btn">
-                        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                    </button>
-                    <button class="safari-nav-btn">
-                        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-                    </button>
+                    <button class="safari-nav-btn"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
+                    <button class="safari-nav-btn"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+                    <button class="safari-nav-btn"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></button>
                 </div>
-                
                 <div class="safari-content">
                     <div class="bbc-article">
                         <div class="bbc-logo">BBC NEWS</div>
                         <h1 class="bbc-headline">Dua tahun Prabowo-Gibran – Warga terpaksa 'downgrade' hidup, untuk makan saja pas-pasan</h1>
                         <div class="bbc-meta">
                             <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
-                            <strong>Riana A Ibrahim</strong><br>
-                            Peranan, Jurnalis BBC News Indonesia<br>
-                            Telah diterbitkan<br>
-                            20 Oktober 2026<br>
-                            Waktu membaca: 13 menit
+                            <strong>Riana A Ibrahim</strong><br>Peranan, Jurnalis BBC News Indonesia<br>Telah diterbitkan<br>20 Oktober 2026<br>Waktu membaca: 13 menit
                         </div>
                         <p class="bbc-intro">Jurus makan tabungan dan makan hutang yang dilakukan masyarakat sudah tak mempan, maka 'downgrade' hidup jadi pilihan bertahan saat hasil kerja mati-matian tak sepadan.</p>
                         <p class="bbc-text">Dari memindahkan sekolah anak yang biayanya lebih terjangkau, bermigrasi ke kota lain, berganti jenis bahan bakar, menjual kendaraan, hingga memutuskan oper kredit cicilan rumah impian demi bertahan hidup dan punya bantalan finansial sebagai jaring aman.</p>
@@ -929,23 +859,12 @@
                         <p class="bbc-text" style="margin-top: 30px; font-size: 14px; color: #505050; border-top: 1px solid #ccc; padding-top: 15px;">Tulisan ini adalah seri kedua laporan BBC News Indonesia terkait dua tahun pemerintahan Prabowo Subianto dan Wakil Presiden Gibran Rakabuming Raka.</p>
                     </div>
                 </div>
-                
                 <div class="safari-bottom-bar">
-                    <button class="safari-bottom-btn disabled">
-                        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                    </button>
-                    <button class="safari-bottom-btn disabled">
-                        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                    </button>
-                    <button class="safari-bottom-btn">
-                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                    </button>
-                    <button class="safari-bottom-btn">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    </button>
-                    <button class="safari-bottom-btn">
-                        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-                    </button>
+                    <button class="safari-bottom-btn disabled"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+                    <button class="safari-bottom-btn disabled"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button>
+                    <button class="safari-bottom-btn"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
+                    <button class="safari-bottom-btn"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></button>
+                    <button class="safari-bottom-btn"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg></button>
                 </div>
             </div>
 
@@ -953,27 +872,62 @@
             <div class="notes-app" id="notesApp">
                 <div class="notes-header">
                     <button class="notes-header-btn" onclick="goHome()">
-                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Home
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg> Home
                     </button>
                     <div class="notes-header-title">Notes</div>
-                    <button class="notes-header-btn">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                    </button>
+                    <button class="notes-header-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
                 </div>
                 <div class="notes-list" id="notesList"></div>
             </div>
+
+            <!-- CAMERA APP -->
+<div class="camera-app" id="cameraApp">
+    <div class="camera-viewfinder">
+        <video id="cameraVideo" src="images/camera-video.mp4" muted loop playsinline></video>
+    </div>
+
+    <!-- Top UI (Flash, Settings ONLY - LIVE removed) -->
+    <div class="camera-ui-top">
+        <div class="camera-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="camera-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+    </div>
+
+    <!-- Bottom UI (Modes, Shutter ONLY - Gallery & Person icons removed) -->
+    <div class="camera-ui-bottom">
+        <div class="camera-modes">
+            <span class="mode">TIME-LAPSE</span>
+            <span class="mode">SLO-MO</span>
+            <span class="mode">VIDEO</span>
+            <span class="mode active">PHOTO</span>
+            <span class="mode">PORTRAIT</span>
+            <span class="mode">PANO</span>
+        </div>
+
+        <div style="display: flex; justify-content: center; width: 100%; align-items: center; padding: 0 20px;">
+            <div class="camera-shutter-outer">
+                <div class="camera-shutter-inner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The ONLY clickable button -->
+    <button class="camera-home-btn" onclick="goHome()">
+        <svg width="12" height="20" viewBox="0 0 12 20" fill="#FFF"><path d="M10 2L2 10l8 8"/></svg>
+        Home
+    </button>
+</div>
 
             <!-- NOTE DETAIL VIEW -->
             <div class="note-detail" id="noteDetail">
                 <div class="note-detail-header">
                     <button class="note-detail-back" onclick="closeNoteDetail()">
-                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Back
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg> Back
                     </button>
-                    <button class="note-detail-share">
-                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                    </button>
+                    <button class="note-detail-share"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></button>
                 </div>
                 <div class="note-detail-content">
                     <div class="note-detail-title" id="noteDetailTitle"></div>
@@ -986,8 +940,7 @@
             <div class="photo-viewer" id="photoViewer">
                 <div class="viewer-top-bar">
                     <button class="viewer-back-btn" onclick="closePhotoViewer()">
-                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#0a84ff"><path d="M10 2L2 10l8 8"/></svg>
-                        Photos
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#0a84ff"><path d="M10 2L2 10l8 8"/></svg> Photos
                     </button>
                     <div class="viewer-top-actions">
                         <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -1033,7 +986,7 @@
             dockApps: [
                 { name: "", icon: "<img src='images/phone.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
                 { name: "", icon: "<img src='images/messages.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
-                { name: "", icon: "<img src='images/camera.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "", icon: "<img src='images/camera.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#8e8e93", badge: null, action: "camera" },
                 { name: "", icon: "<img src='images/safari.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "safari" }
             ]
         };
@@ -1162,6 +1115,11 @@
             document.getElementById('notesApp').classList.remove('active');
             document.getElementById('noteDetail').classList.remove('active');
             document.getElementById('photoViewer').classList.remove('active');
+            document.getElementById('cameraApp').classList.remove('active');
+            
+            // Pause the camera video when going home
+            const video = document.getElementById('cameraVideo');
+            if (video) video.pause();
             
             document.getElementById('homeScreen').classList.add('active');
             lockScreen.classList.add('hidden');
@@ -1217,6 +1175,15 @@
 
         function openSafariApp() { haptic(50); document.getElementById('safariApp').classList.add('active'); }
         function openNotesApp() { haptic(50); document.getElementById('notesApp').classList.add('active'); loadNotesList(); }
+
+        // ADDED CAMERA FUNCTION
+        function openCameraApp() {
+            haptic(50);
+            document.getElementById('cameraApp').classList.add('active');
+            const video = document.getElementById('cameraVideo');
+            video.currentTime = 0;
+            video.play().catch(e => console.log("Video play failed:", e));
+        }
 
         function closeNoteDetail() {
             haptic(30);
@@ -1278,6 +1245,7 @@
                 else if (app.action === 'gemini') clickHandler = 'openGeminiApp()';
                 else if (app.action === 'safari') clickHandler = 'openSafariApp()';
                 else if (app.action === 'notes') clickHandler = 'openNotesApp()';
+                else if (app.action === 'camera') clickHandler = 'openCameraApp()';
                 return `<div class="app" onclick="${clickHandler}"><div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div><div class="app-name">${app.name}</div></div>`;
             };
             appGrid.innerHTML = SETTINGS.apps.map(createAppHTML).join('');
