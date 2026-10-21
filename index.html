@@ -258,7 +258,7 @@
         .dock .app-icon { width: 60px; height: 60px; border-radius: 16px; box-shadow: none; }
 
         /* ============ APPS (SLICK TRANSITIONS) ============ */
-        .photos-app, .gemini-app, .safari-app, .notes-app, .note-detail, .camera-app {
+        .photos-app, .gemini-app, .safari-app, .notes-app, .note-detail, .camera-app, .messages-app, .phone-app {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 700;
             display: flex; flex-direction: column;
@@ -267,10 +267,120 @@
             overflow: hidden;
             color: #000;
         }
-        .photos-app.active, .gemini-app.active, .safari-app.active, .notes-app.active, .note-detail.active, .camera-app.active { 
+        .photos-app.active, .gemini-app.active, .safari-app.active, .notes-app.active, .note-detail.active, .camera-app.active, .messages-app.active, .phone-app.active { 
             transform: translateY(0) scale(1); 
         }
         .note-detail { z-index: 710; }
+
+        /* ============ PHONE APP ============ */
+        .phone-app { background: #FFFFFF; }
+        .phone-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 16px 10px;
+            background: #F2F2F7;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .phone-btn {
+            background: none; border: none; color: #007AFF; font-size: 17px;
+            cursor: pointer; font-weight: 400; display: flex; align-items: center; gap: 4px;
+        }
+        .phone-btn:active { opacity: 0.6; }
+        .phone-title { font-size: 17px; font-weight: 600; color: #000; }
+        
+        .phone-list {
+            flex: 1; overflow-y: auto; background: #FFFFFF;
+        }
+        .call-item {
+            display: flex; align-items: center; padding: 12px 16px;
+            border-bottom: 0.5px solid #E5E5EA; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .call-item:active { background: #E5E5EA; }
+        .call-info-icon {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: #E5E5EA; color: #007AFF;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; font-family: serif; font-style: italic;
+            margin-right: 12px; flex-shrink: 0;
+        }
+        .call-details { flex: 1; min-width: 0; }
+        .call-name { font-size: 17px; font-weight: 600; color: #000; margin-bottom: 2px; }
+        .call-type { font-size: 13px; color: #8E8E93; }
+        .call-time { font-size: 15px; color: #8E8E93; margin-left: 10px; white-space: nowrap; }
+
+        .phone-tab-bar {
+            position: absolute; bottom: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid #C6C6C8;
+            display: flex; justify-content: space-around;
+            padding: 8px 0 25px;
+            z-index: 20;
+        }
+        .phone-tab {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: #8E8E93; font-size: 10px; font-weight: 500; cursor: pointer;
+        }
+        .phone-tab.active { color: #007AFF; }
+        .phone-tab svg { width: 24px; height: 24px; fill: currentColor; }
+
+        /* ============ MESSAGES APP ============ */
+        .messages-app { background: #FFFFFF; }
+        .messages-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 16px 10px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid #C6C6C8;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .messages-btn {
+            background: none; border: none; color: #007AFF; font-size: 17px;
+            cursor: pointer; font-weight: 400; display: flex; align-items: center;
+        }
+        .messages-btn:active { opacity: 0.6; }
+        .messages-title { font-size: 17px; font-weight: 600; color: #000; }
+        
+        .messages-list {
+            flex: 1; overflow-y: auto; background: #FFFFFF;
+        }
+        .message-item {
+            display: flex; align-items: center; padding: 10px 16px;
+            border-bottom: 0.5px solid #E5E5EA; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .message-item:active { background: #E5E5EA; }
+        .message-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #8E8E93; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 600; margin-right: 12px; flex-shrink: 0;
+        }
+        .message-content { flex: 1; min-width: 0; }
+        .message-top {
+            display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;
+        }
+        .message-sender { font-size: 16px; font-weight: 600; color: #000; }
+        .message-time { font-size: 14px; color: #8E8E93; }
+        .message-preview {
+            font-size: 15px; color: #8E8E93;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .messages-bottom-bar {
+            padding: 10px 16px 30px;
+            border-top: 0.5px solid #E5E5EA;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .messages-filter { color: #007AFF; font-size: 17px; font-weight: 400; cursor: pointer; }
+        .messages-compose {
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
 
         /* ============ PHOTOS APP ============ */
         .photos-app { background: #FFFFFF; }
@@ -487,39 +597,6 @@
         .note-detail-date { font-size: 13px; color: #8E8E93; margin-bottom: 20px; }
         .note-detail-body { font-size: 17px; line-height: 1.5; color: #000; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* ============ PHOTO VIEWER ============ */
-        .photo-viewer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 800;
-            display: flex; flex-direction: column;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .photo-viewer.active { opacity: 1; pointer-events: all; }
-        .viewer-top-bar {
-            position: absolute; top: 0; left: 0; width: 100%;
-            padding: 55px 20px 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
-            z-index: 10;
-        }
-        .viewer-back-btn {
-            color: #0a84ff; font-size: 17px; cursor: pointer; background: none; border: none;
-            display: flex; align-items: center; gap: 4px;
-        }
-        .viewer-back-btn:active { opacity: 0.6; }
-        .viewer-top-actions { display: flex; gap: 20px; }
-        .viewer-top-actions svg { width: 22px; height: 22px; fill: #0a84ff; cursor: pointer; }
-        .viewer-image { width: 100%; height: 100%; object-fit: contain; background: #000; }
-        .viewer-bottom-bar {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 15px 20px 30px;
-            display: flex; justify-content: space-around;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            z-index: 10;
-        }
-        .viewer-bottom-bar svg { width: 24px; height: 24px; fill: #0a84ff; cursor: pointer; }
-
         /* ============ CAMERA APP ============ */
         .camera-app {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -558,7 +635,6 @@
             border: 4px solid #FFF; display: flex; justify-content: center; align-items: center;
         }
         .camera-shutter-inner { width: 58px; height: 58px; border-radius: 50%; background: #FFF; }
-        .camera-gallery-thumb { width: 40px; height: 40px; background: #333; border-radius: 6px; border: 1px solid #FFF; }
         .camera-home-btn {
             position: absolute; top: 50px; left: 15px; z-index: 20;
             background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 20px;
@@ -568,6 +644,39 @@
             backdrop-filter: blur(10px);
         }
         .camera-home-btn:active { opacity: 0.6; }
+
+        /* ============ PHOTO VIEWER ============ */
+        .photo-viewer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 800;
+            display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .photo-viewer.active { opacity: 1; pointer-events: all; }
+        .viewer-top-bar {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 55px 20px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+        }
+        .viewer-back-btn {
+            color: #0a84ff; font-size: 17px; cursor: pointer; background: none; border: none;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .viewer-back-btn:active { opacity: 0.6; }
+        .viewer-top-actions { display: flex; gap: 20px; }
+        .viewer-top-actions svg { width: 22px; height: 22px; fill: #0a84ff; cursor: pointer; }
+        .viewer-image { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        .viewer-bottom-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 15px 20px 30px;
+            display: flex; justify-content: space-around;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+        }
+        .viewer-bottom-bar svg { width: 24px; height: 24px; fill: #0a84ff; cursor: pointer; }
 
         .vibrate { animation: vibrate 0.1s; }
         @keyframes vibrate { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-1px, 0); } 75% { transform: translate(1px, 0); } }
@@ -666,6 +775,45 @@
                 <div class="dock" id="dock"></div>
             </div>
 
+            <!-- PHONE APP -->
+            <div class="phone-app" id="phoneApp">
+                <div class="phone-header">
+                    <button class="phone-btn" onclick="goHome()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg> Home
+                    </button>
+                    <div class="phone-title">Recents</div>
+                    <button class="phone-btn" style="font-size: 15px;">Clear</button>
+                </div>
+                <div class="phone-list" id="phoneList"></div>
+                <div class="phone-tab-bar">
+                    <div class="phone-tab"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg><span>Favorites</span></div>
+                    <div class="phone-tab active"><svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg><span>Recents</span></div>
+                    <div class="phone-tab"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Contacts</span></div>
+                    <div class="phone-tab"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Keypad</span></div>
+                    <div class="phone-tab"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg><span>Voicemail</span></div>
+                </div>
+            </div>
+
+            <!-- MESSAGES APP -->
+            <div class="messages-app" id="messagesApp">
+                <div class="messages-header">
+                    <button class="messages-btn" onclick="goHome()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg> Home
+                    </button>
+                    <div class="messages-title">Messages</div>
+                    <button class="messages-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </button>
+                </div>
+                <div class="messages-list" id="messagesList"></div>
+                <div class="messages-bottom-bar">
+                    <div class="messages-filter">Filters</div>
+                    <div class="messages-compose">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    </div>
+                </div>
+            </div>
+
             <!-- PHOTOS APP -->
             <div class="photos-app" id="photosApp">
                 <div class="photos-nav-bar">
@@ -678,7 +826,7 @@
                 <div class="photos-section-header" id="photosSectionHeader">Month Year</div>
                 <div class="photos-grid" id="photosGrid"></div>
                 <div class="photos-tab-bar">
-                    <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v4H8V8z"/></svg><span>Library</span></div>
+                    <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v8H8V8z"/></svg><span>Library</span></div>
                     <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>For You</span></div>
                     <div class="tab-item active"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h8v4H8v-4z"/></svg><span>Albums</span></div>
                     <div class="tab-item"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><span>Search</span></div>
@@ -881,45 +1029,31 @@
             </div>
 
             <!-- CAMERA APP -->
-<div class="camera-app" id="cameraApp">
-    <div class="camera-viewfinder">
-        <video id="cameraVideo" src="images/camera-video.mp4" muted loop playsinline></video>
-    </div>
-
-    <!-- Top UI (Flash, Settings ONLY - LIVE removed) -->
-    <div class="camera-ui-top">
-        <div class="camera-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <div class="camera-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </div>
-    </div>
-
-    <!-- Bottom UI (Modes, Shutter ONLY - Gallery & Person icons removed) -->
-    <div class="camera-ui-bottom">
-        <div class="camera-modes">
-            <span class="mode">TIME-LAPSE</span>
-            <span class="mode">SLO-MO</span>
-            <span class="mode">VIDEO</span>
-            <span class="mode active">PHOTO</span>
-            <span class="mode">PORTRAIT</span>
-            <span class="mode">PANO</span>
-        </div>
-
-        <div style="display: flex; justify-content: center; width: 100%; align-items: center; padding: 0 20px;">
-            <div class="camera-shutter-outer">
-                <div class="camera-shutter-inner"></div>
+            <div class="camera-app" id="cameraApp">
+                <div class="camera-viewfinder">
+                    <video id="cameraVideo" src="images/camera-video.mp4" muted loop playsinline></video>
+                </div>
+                <div class="camera-ui-top">
+                    <div class="camera-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                    <div class="camera-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                </div>
+                <div class="camera-ui-bottom">
+                    <div class="camera-modes">
+                        <span class="mode">TIME-LAPSE</span>
+                        <span class="mode">SLO-MO</span>
+                        <span class="mode">VIDEO</span>
+                        <span class="mode active">PHOTO</span>
+                        <span class="mode">PORTRAIT</span>
+                        <span class="mode">PANO</span>
+                    </div>
+                    <div style="display: flex; justify-content: center; width: 100%; align-items: center; padding: 0 20px;">
+                        <div class="camera-shutter-outer"><div class="camera-shutter-inner"></div></div>
+                    </div>
+                </div>
+                <button class="camera-home-btn" onclick="goHome()">
+                    <svg width="12" height="20" viewBox="0 0 12 20" fill="#FFF"><path d="M10 2L2 10l8 8"/></svg> Home
+                </button>
             </div>
-        </div>
-    </div>
-
-    <!-- The ONLY clickable button -->
-    <button class="camera-home-btn" onclick="goHome()">
-        <svg width="12" height="20" viewBox="0 0 12 20" fill="#FFF"><path d="M10 2L2 10l8 8"/></svg>
-        Home
-    </button>
-</div>
 
             <!-- NOTE DETAIL VIEW -->
             <div class="note-detail" id="noteDetail">
@@ -959,6 +1093,23 @@
     </div>
 
     <script>
+        const PHONE_DATA = [
+            { name: "icel", type: "from mobile", time: "01:21 AM" },
+            { name: "icel", type: "from mobile", time: "10:22 AM" },
+            { name: "atin", type: "from mobile", time: "Yesterday" },
+            { name: "mama", type: "from mobile", time: "Yesterday" },
+            { name: "mama", type: "from mobile", time: "Monday" },
+            { name: "michie", type: "from mobile", time: "Sunday" },
+            { name: "icel", type: "from mobile", time: "Friday" }
+        ];
+
+        const MESSAGES_DATA = [
+            { sender: "XL", date: "Wed", preview: "Paaket FlexMax 7GB, 28hr, 35rb akan diperpjg tgl  23-Oct-2026 mulai jam 23:59 WIB. Pastikan pulsa Anda mencukupi." },
+            { sender: "KOMDIGI", date: "Sep 10", preview: "Waspada erupsi & abu vulkanik. Pakai masker, tutup pintu/jendela, jauhi zona bahaya dan saring info (stop hoaks). Info resmi: BNPB 117 / BMKG 196" },
+            { sender: "555", date: "Aug 24", preview: "Anda masih memiliki bonus dari pembelian pulsa isi ulang. Segera aktifkan bonus Anda." },
+            { sender: "0895-0619-420", date: "Aug 08", preview: "Nomor ini menghubungi anda pada 08/08/26 10:13" }
+        ];
+
         const NOTES_DATA = [
             { title: "shampoo buat ngembangin rambut", content: "dari twitter\n\nmarsha oshi = aku? jadi duta shampoo lain???\nbass = udah lebat banget katanya\nara = diane, varian sesuai kebutuhan\nmaarukyuu  = lepas extension kah??\npandu = tanya ekin\nkalkunsenang =\n1. Rosemary Oil & Minyak kemiri bakar (selang seling aja pakenya)\n3. Hair growth shampoo (aku selang seling miranda sm kerastase)\n4. Absolut repair serum l’oreal\n5. Kerastase genesis serum\n(mana nomor 2 nya wkwk)", date: "Oct 21, 2026" },
             { title: "situs manga online", content: "comix mangadot atsumaru mangaball mangafire weebcentral mangago onisaga toonkotsu", date: "Oct 20, 2026" },
@@ -984,10 +1135,10 @@
                 { name: "Instagram", icon: "<img src='images/instagram.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null }
             ],
             dockApps: [
-                { name: "", icon: "<img src='images/phone.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
-                { name: "", icon: "<img src='images/messages.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
-                { name: "", icon: "<img src='images/camera.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#8e8e93", badge: null, action: "camera" },
-                { name: "", icon: "<img src='images/safari.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "safari" }
+                { name: "Phone", icon: "<img src='images/phone.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#34c759", badge: null, action: "phone" },
+                { name: "Messages", icon: "<img src='images/messages.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#34c759", badge: null, action: "messages" },
+                { name: "Camera", icon: "<img src='images/camera.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#8e8e93", badge: null, action: "camera" },
+                { name: "Safari", icon: "<img src='images/safari.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#007aff", badge: null, action: "safari" }
             ]
         };
 
@@ -1116,8 +1267,9 @@
             document.getElementById('noteDetail').classList.remove('active');
             document.getElementById('photoViewer').classList.remove('active');
             document.getElementById('cameraApp').classList.remove('active');
+            document.getElementById('messagesApp').classList.remove('active');
+            document.getElementById('phoneApp').classList.remove('active');
             
-            // Pause the camera video when going home
             const video = document.getElementById('cameraVideo');
             if (video) video.pause();
             
@@ -1175,8 +1327,58 @@
 
         function openSafariApp() { haptic(50); document.getElementById('safariApp').classList.add('active'); }
         function openNotesApp() { haptic(50); document.getElementById('notesApp').classList.add('active'); loadNotesList(); }
+        
+        function openMessagesApp() {
+            haptic(50);
+            document.getElementById('messagesApp').classList.add('active');
+            loadMessages();
+        }
 
-        // ADDED CAMERA FUNCTION
+        function openPhoneApp() {
+            haptic(50);
+            document.getElementById('phoneApp').classList.add('active');
+            loadPhoneRecents();
+        }
+
+        function loadPhoneRecents() {
+            const list = document.getElementById('phoneList');
+            list.innerHTML = '';
+            PHONE_DATA.forEach(call => {
+                const item = document.createElement('div');
+                item.className = 'call-item';
+                item.innerHTML = `
+                    <div class="call-info-icon">i</div>
+                    <div class="call-details">
+                        <div class="call-name">${call.name}</div>
+                        <div class="call-type">${call.type}</div>
+                    </div>
+                    <div class="call-time">${call.time}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function loadMessages() {
+            const list = document.getElementById('messagesList');
+            list.innerHTML = '';
+            MESSAGES_DATA.forEach(msg => {
+                const initial = msg.sender.charAt(0).toUpperCase();
+                const item = document.createElement('div');
+                item.className = 'message-item';
+                item.innerHTML = `
+                    <div class="message-avatar">${initial}</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-sender">${msg.sender}</span>
+                            <span class="message-time">${msg.date}</span>
+                        </div>
+                        <div class="message-preview">${msg.preview}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
         function openCameraApp() {
             haptic(50);
             document.getElementById('cameraApp').classList.add('active');
@@ -1246,6 +1448,8 @@
                 else if (app.action === 'safari') clickHandler = 'openSafariApp()';
                 else if (app.action === 'notes') clickHandler = 'openNotesApp()';
                 else if (app.action === 'camera') clickHandler = 'openCameraApp()';
+                else if (app.action === 'messages') clickHandler = 'openMessagesApp()';
+                else if (app.action === 'phone') clickHandler = 'openPhoneApp()';
                 return `<div class="app" onclick="${clickHandler}"><div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div><div class="app-name">${app.name}</div></div>`;
             };
             appGrid.innerHTML = SETTINGS.apps.map(createAppHTML).join('');
