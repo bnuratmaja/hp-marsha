@@ -24,24 +24,15 @@
             transform-origin: center center;
         }
 
+        /* MOBILE FULL SCREEN FIX */
         @media (max-width: 450px) {
-            body {
-                background: #000;
-                margin: 0;
-                padding: 0;
-                overflow: hidden; /* Prevents scrolling */
-            }
-            .iphone-frame {
-                /* Automatically calculates the perfect scale to fit your screen */
-                transform: scale(calc(min(100vw / 390, 100dvh / 844)));
-                transform-origin: center center;
-            }
+            body { background: #000; margin: 0; padding: 0; overflow: hidden; }
+            .iphone-frame { transform: none; }
             .iphone {
-                /* Removes the phone frame on mobile so it feels like a real app */
-                border: none;
-                box-shadow: none;
-                border-radius: 0;
+                width: 100vw; height: 100vh; height: 100dvh;
+                border-radius: 0; border: none; box-shadow: none;
             }
+            .notch { display: none; }
         }
 
         .iphone {
@@ -76,6 +67,16 @@
         .status-icons { display: flex; align-items: center; gap: 6px; }
         .status-icons svg { fill: white; display: block; }
 
+        /* UNIVERSAL HOME BUTTON */
+        .universal-home-btn {
+            position: absolute; top: 55px; left: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 20px;
+            padding: 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+            display: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .universal-home-btn:active { transform: scale(0.95); }
+        .universal-home-btn.visible { display: block; }
+
         .lock-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center;
@@ -92,7 +93,7 @@
         }
         
         .lock-screen.hidden { 
-            transform: translateY(-100%); opacity: 0; pointer-events: none; 
+            transform: translateY(-100%); opacity: 0; pointer-events: none; display: none; 
         }
 
         .lock-content {
@@ -524,7 +525,6 @@
         }
         .note-item-date { font-size: 15px; color: #8E8E93; white-space: nowrap; margin-top: 2px; }
 
-        /* Note Detail View */
         .note-detail {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #FFFFFF;
@@ -613,6 +613,9 @@
 
     <div class="iphone-frame">
         <div class="iphone" id="iphone">
+            <!-- UNIVERSAL HOME BUTTON -->
+            <button class="universal-home-btn" id="homeBtn" onclick="goHome()">Home</button>
+
             <div class="wallpaper" id="wallpaper">
                 <img id="wallpaperImg" src="" alt="Wallpaper">
             </div>
@@ -680,7 +683,6 @@
                     <div class="passcode-btn" onclick="cancelPasscode()">Cancel</div>
                     <div class="passcode-btn delete" id="deleteBtn" onclick="deleteNumber()">Delete</div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px;" onclick="goHome()"></div>
             </div>
 
             <!-- HOME SCREEN -->
@@ -701,7 +703,6 @@
                 <div class="app-grid" id="app-grid"></div>
 
                 <div class="dock" id="dock"></div>
-                <div class="home-indicator" style="margin-top: 10px;" onclick="goHome()"></div>
             </div>
 
             <!-- PHOTOS APP -->
@@ -735,7 +736,6 @@
                         <span>Search</span>
                     </div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closePhotosApp()"></div>
             </div>
 
             <!-- GEMINI APP -->
@@ -789,7 +789,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeGeminiApp()"></div>
             </div>
 
             <!-- SAFARI APP -->
@@ -821,9 +820,6 @@
                         <div class="bbc-logo">BBC NEWS</div>
                         <h1 class="bbc-headline">Dua tahun Prabowo-Gibran – Warga terpaksa 'downgrade' hidup, untuk makan saja pas-pasan</h1>
                         <div class="bbc-meta">
-
-<img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
-        
                             <strong>Riana A Ibrahim</strong><br>
                             Peranan, Jurnalis BBC News Indonesia<br>
                             Telah diterbitkan<br>
@@ -953,7 +949,6 @@
                         <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
                     </button>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeSafariApp()"></div>
             </div>
 
             <!-- NOTES APP -->
@@ -968,7 +963,6 @@
                 <div class="notes-list" id="notesList">
                     <!-- Notes will be injected here -->
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNotesApp()"></div>
             </div>
 
             <!-- NOTE DETAIL VIEW -->
@@ -987,7 +981,6 @@
                     <div class="note-detail-date" id="noteDetailDate"></div>
                     <div class="note-detail-body" id="noteDetailBody"></div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNoteDetail()"></div>
             </div>
 
             <!-- PHOTO VIEWER -->
@@ -1009,7 +1002,6 @@
                     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(255,255,255,0.5);" onclick="closePhotoViewer()"></div>
             </div>
         </div>
     </div>
@@ -1223,6 +1215,7 @@
 
         function goHome() {
             haptic(30);
+            hideHomeBtn();
             document.getElementById('homeScreen').classList.remove('active');
             document.getElementById('photosApp').classList.remove('active');
             document.getElementById('geminiApp').classList.remove('active');
@@ -1241,15 +1234,18 @@
             if (!lockScreen.classList.contains('hidden')) { haptic(50); showPasscode(); }
         }
 
+        function showHomeBtn() { document.getElementById('homeBtn').classList.add('visible'); }
+        function hideHomeBtn() { document.getElementById('homeBtn').classList.remove('visible'); }
+
         // ============ PHOTOS APP FUNCTIONS ============
         function openPhotosApp() {
-            haptic(50);
+            haptic(50); showHomeBtn();
             document.getElementById('photosApp').classList.add('active');
             loadPhotos();
         }
 
         function closePhotosApp() {
-            haptic(30);
+            haptic(30); hideHomeBtn();
             document.getElementById('photosApp').classList.remove('active');
         }
 
@@ -1282,7 +1278,7 @@
 
         // ============ GEMINI APP FUNCTIONS ============
         function openGeminiApp() {
-            haptic(50);
+            haptic(50); showHomeBtn();
             document.getElementById('geminiApp').classList.add('active');
             setTimeout(() => {
                 const chat = document.querySelector('.gemini-chat');
@@ -1291,30 +1287,30 @@
         }
 
         function closeGeminiApp() {
-            haptic(30);
+            haptic(30); hideHomeBtn();
             document.getElementById('geminiApp').classList.remove('active');
         }
 
         // ============ SAFARI APP FUNCTIONS ============
         function openSafariApp() {
-            haptic(50);
+            haptic(50); showHomeBtn();
             document.getElementById('safariApp').classList.add('active');
         }
 
         function closeSafariApp() {
-            haptic(30);
+            haptic(30); hideHomeBtn();
             document.getElementById('safariApp').classList.remove('active');
         }
 
         // ============ NOTES APP FUNCTIONS ============
         function openNotesApp() {
-            haptic(50);
+            haptic(50); showHomeBtn();
             document.getElementById('notesApp').classList.add('active');
             loadNotesList();
         }
 
         function closeNotesApp() {
-            haptic(30);
+            haptic(30); hideHomeBtn();
             document.getElementById('notesApp').classList.remove('active');
             document.getElementById('noteDetail').classList.remove('active');
         }
