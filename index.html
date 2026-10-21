@@ -24,29 +24,19 @@
             transform-origin: center center;
         }
 
-        /* ============ MOBILE FULL SCREEN MODE ============ */
+        /* PERFECT MOBILE FIT */
         @media (max-width: 450px) {
-            body {
-                background: #000;
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-            }
-            .iphone-frame {
-                transform: scale(calc(min(100vw / 390, 100dvh / 844)));
-                transform-origin: center center;
-            }
+            body { background: #000; margin: 0; padding: 0; overflow: hidden; }
+            .iphone-frame { transform: none; }
             .iphone {
-                border: none !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
+                /* Mathematically fits the 390x844 aspect ratio into any mobile screen */
+                width: min(100vw, 100dvh * (390/844));
+                height: min(100dvh, 100vw * (844/390));
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
             }
-            .notch {
-                display: none;
-            }
-            .status-bar {
-                padding-top: 8px;
-            }
+            .notch { display: none; }
         }
 
         .iphone {
@@ -97,7 +87,7 @@
         }
         
         .lock-screen.hidden { 
-            transform: translateY(-100%); opacity: 0; pointer-events: none; 
+            transform: translateY(-100%); opacity: 0; pointer-events: none; display: none; 
         }
 
         .lock-content {
@@ -122,6 +112,23 @@
         .lock-bottom {
             position: absolute; bottom: 40px; width: 100%;
             display: flex; flex-direction: column; align-items: center;
+        }
+
+        .lock-buttons {
+            display: flex; justify-content: space-between; width: 82%; margin-bottom: 25px;
+        }
+
+        .lock-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .lock-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
+        .lock-btn svg { width: 22px; height: 22px; fill: white; }
+
+        .swipe-text { 
+            font-size: 14px; color: white; opacity: 0.8; margin-bottom: 10px; cursor: pointer; 
         }
 
         .home-indicator { 
@@ -230,55 +237,23 @@
         }
         .dock .app-icon { width: 60px; height: 60px; border-radius: 16px; box-shadow: none; }
 
-        /* ============ UNIVERSAL HOME BUTTON ============ */
-        .universal-home-btn {
-            position: absolute;
-            top: 50px;
-            left: 12px;
-            z-index: 950;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .universal-home-btn.visible {
-            display: flex;
-            opacity: 1;
-        }
-        .universal-home-btn:active {
-            transform: scale(0.95);
-            background: rgba(0, 0, 0, 0.75);
-        }
-        .universal-home-btn svg {
-            width: 14px;
-            height: 14px;
-            fill: white;
-        }
-
-        /* ============ PHOTOS APP ============ */
-        .photos-app {
+        /* ============ APPS (SLICK TRANSITIONS) ============ */
+        .photos-app, .gemini-app, .safari-app, .notes-app, .note-detail {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFFFFF;
             z-index: 700;
             display: flex; flex-direction: column;
-            transform: translateY(100%);
+            transform: translateY(100%) scale(0.95); /* Slight scale for iOS feel */
             transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
             overflow: hidden;
             color: #000;
         }
-        .photos-app.active { transform: translateY(0); }
+        .photos-app.active, .gemini-app.active, .safari-app.active, .notes-app.active, .note-detail.active { 
+            transform: translateY(0) scale(1); 
+        }
+        .note-detail { z-index: 710; }
+
+        /* ============ PHOTOS APP ============ */
+        .photos-app { background: #FFFFFF; }
 
         .photos-nav-bar {
             display: flex; justify-content: space-between; align-items: center;
@@ -341,16 +316,7 @@
         .tab-item svg { width: 24px; height: 24px; fill: currentColor; }
 
         /* ============ GEMINI APP ============ */
-        .gemini-app {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFFFFF;
-            z-index: 700;
-            display: flex; flex-direction: column;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            color: #000;
-        }
-        .gemini-app.active { transform: translateY(0); }
+        .gemini-app { background: #FFFFFF; }
 
         .gemini-header {
             display: flex; align-items: center; gap: 10px;
@@ -416,16 +382,7 @@
         .gemini-action-btn svg { width: 20px; height: 20px; fill: #5F6368; }
 
         /* ============ SAFARI APP ============ */
-        .safari-app {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #F2F2F7;
-            z-index: 700;
-            display: flex; flex-direction: column;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            color: #000;
-        }
-        .safari-app.active { transform: translateY(0); }
+        .safari-app { background: #F2F2F7; }
 
         .safari-top-bar {
             display: flex; align-items: center; gap: 12px;
@@ -503,16 +460,7 @@
         .safari-bottom-btn svg { width: 24px; height: 24px; fill: #007AFF; }
 
         /* ============ NOTES APP ============ */
-        .notes-app {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #F2F2F7;
-            z-index: 700;
-            display: flex; flex-direction: column;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            color: #000;
-        }
-        .notes-app.active { transform: translateY(0); }
+        .notes-app { background: #F2F2F7; }
 
         .notes-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -549,15 +497,7 @@
         }
         .note-item-date { font-size: 15px; color: #8E8E93; white-space: nowrap; margin-top: 2px; }
 
-        .note-detail {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FFFFFF;
-            z-index: 710;
-            display: flex; flex-direction: column;
-            transform: translateY(100%);
-            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        .note-detail.active { transform: translateY(0); }
+        .note-detail { background: #FFFFFF; }
 
         .note-detail-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -642,22 +582,22 @@
             </div>
             <div class="notch"></div>
 
-            <!-- UNIVERSAL HOME BUTTON -->
-            <button class="universal-home-btn" id="universalHomeBtn" onclick="goHome()">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                Home
-            </button>
-
             <div class="status-bar">
                 <span class="status-time" id="status-time">00:00</span>
                 <div class="status-icons">
                     <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity="0.3"/></svg>
                     <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/><path d="M8 6a5.5 5.5 0 00-5.5 5.5h2A3.5 3.5 0 018 8a3.5 3.5 0 013.5 3.5h2A5.5 5.5 0 008 6z"/><path d="M8 2.5a9 9 0 00-9 9h2a7 7 0 017-7 7 7 0 017 7h2a9 9 0 00-9-9z"/></svg>
-                    <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" fill="none" stroke-width="1"/><rect x="2.5" y="2.5" width="17" height="7" rx="2" fill="white"/><path d="M23 4v4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <!-- ORANGE 48% BATTERY -->
+                    <span style="font-size: 13px; font-weight: 600; color: #FF9F0A; margin-right: 2px;">48</span>
+                    <svg width="25" height="12" viewBox="0 0 25 12">
+                        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#FF9F0A" fill="none" stroke-width="1"/>
+                        <rect x="2.5" y="2.5" width="9" height="7" rx="2" fill="#FF9F0A"/>
+                        <path d="M23 4v4" stroke="#FF9F0A" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
                 </div>
             </div>
 
-            <!-- LOCK SCREEN (Cleaned up - no swipe text, no flashlight/camera) -->
+            <!-- LOCK SCREEN -->
             <div class="lock-screen" id="lockScreen">
                 <div class="lock-content">
                     <div class="lock-icon-top">
@@ -668,6 +608,15 @@
                 </div>
                 
                 <div class="lock-bottom">
+                    <div class="lock-buttons">
+                        <div class="lock-btn" onclick="haptic(50)">
+                            <svg viewBox="0 0 24 24"><path d="M6 2h12v4h-2V4H8v2H6V2zm0 6h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V8zm4 2v8h4v-8h-4z"/></svg>
+                        </div>
+                        <div class="lock-btn" onclick="haptic(50)">
+                            <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
+                        </div>
+                    </div>
+                    <div class="swipe-text" id="swipeText">Swipe up to open</div>
                     <div class="home-indicator" onclick="handleHomeClick()"></div>
                 </div>
             </div>
@@ -701,7 +650,6 @@
                     <div class="passcode-btn" onclick="cancelPasscode()">Cancel</div>
                     <div class="passcode-btn delete" id="deleteBtn" onclick="deleteNumber()">Delete</div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px;" onclick="goHome()"></div>
             </div>
 
             <!-- HOME SCREEN -->
@@ -722,15 +670,14 @@
                 <div class="app-grid" id="app-grid"></div>
 
                 <div class="dock" id="dock"></div>
-                <div class="home-indicator" style="margin-top: 10px;" onclick="goHome()"></div>
             </div>
 
             <!-- PHOTOS APP -->
             <div class="photos-app" id="photosApp">
                 <div class="photos-nav-bar">
-                    <button class="nav-btn" onclick="closePhotosApp()">
+                    <button class="nav-btn" onclick="goHome()">
                         <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Photos
+                        Home
                     </button>
                     <div class="nav-title">Recents</div>
                     <button class="nav-btn">Select</button>
@@ -756,16 +703,16 @@
                         <span>Search</span>
                     </div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closePhotosApp()"></div>
             </div>
 
             <!-- GEMINI APP -->
             <div class="gemini-app" id="geminiApp">
                 <div class="gemini-header">
-                    <button class="gemini-back" onclick="closeGeminiApp()">
+                    <button class="gemini-back" onclick="goHome()">
                         <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                        Home
                     </button>
-                    <div class="gemini-title">Gemini</div>
+                    <div class="gemini-title" style="margin-left: auto; margin-right: auto; transform: translateX(-20px);">Gemini</div>
                 </div>
                 
                 <div class="gemini-chat">
@@ -810,17 +757,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeGeminiApp()"></div>
             </div>
 
             <!-- SAFARI APP -->
             <div class="safari-app" id="safariApp">
                 <div class="safari-top-bar">
-                    <button class="safari-nav-btn disabled" onclick="closeSafariApp()">
-                        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                    </button>
-                    <button class="safari-nav-btn disabled">
-                        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                    <button class="safari-nav-btn" onclick="goHome()" style="display:flex; align-items:center; gap:4px; color:#007AFF; font-size:17px;">
+                        <svg viewBox="0 0 24 24" style="width:22px; height:22px; fill:#007AFF;"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                        Home
                     </button>
                     <div class="safari-url-bar">
                         <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
@@ -971,7 +915,6 @@
                         <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
                     </button>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeSafariApp()"></div>
             </div>
 
             <!-- NOTES APP -->
@@ -983,16 +926,17 @@
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                     </button>
                 </div>
-                <div class="notes-list" id="notesList"></div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNotesApp()"></div>
+                <div class="notes-list" id="notesList">
+                    <!-- Notes will be injected here -->
+                </div>
             </div>
 
             <!-- NOTE DETAIL VIEW -->
             <div class="note-detail" id="noteDetail">
                 <div class="note-detail-header">
-                    <button class="note-detail-back" onclick="closeNoteDetail()">
+                    <button class="note-detail-back" onclick="goHome()">
                         <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Notes
+                        Home
                     </button>
                     <button class="note-detail-share">
                         <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
@@ -1003,7 +947,6 @@
                     <div class="note-detail-date" id="noteDetailDate"></div>
                     <div class="note-detail-body" id="noteDetailBody"></div>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNoteDetail()"></div>
             </div>
 
             <!-- PHOTO VIEWER -->
@@ -1025,7 +968,6 @@
                     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 </div>
-                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(255,255,255,0.5);" onclick="closePhotoViewer()"></div>
             </div>
         </div>
     </div>
@@ -1182,13 +1124,7 @@
             handleSwipe(diff);
         });
 
-        // Click anywhere on lock screen to unlock (since swipe text is removed)
-        lockScreen.addEventListener('click', (e) => {
-            if (!lockScreen.classList.contains('hidden') && !lockScreen.classList.contains('blurred')) {
-                haptic(50);
-                showPasscode();
-            }
-        });
+        document.getElementById('swipeText').addEventListener('click', () => { haptic(50); showPasscode(); });
 
         function showPasscode() {
             haptic(50);
@@ -1243,38 +1179,21 @@
             }
         }
 
-        // ============ UNIVERSAL HOME BUTTON LOGIC ============
-        function updateHomeButton() {
-            const homeBtn = document.getElementById('universalHomeBtn');
-            const anyAppOpen = document.getElementById('photosApp').classList.contains('active') ||
-                              document.getElementById('geminiApp').classList.contains('active') ||
-                              document.getElementById('safariApp').classList.contains('active') ||
-                              document.getElementById('notesApp').classList.contains('active') ||
-                              document.getElementById('noteDetail').classList.contains('active') ||
-                              document.getElementById('photoViewer').classList.contains('active');
-            
-            if (anyAppOpen) {
-                homeBtn.classList.add('visible');
-            } else {
-                homeBtn.classList.remove('visible');
-            }
-        }
-
+        // GOES TO HOME SCREEN, NOT LOCK SCREEN
         function goHome() {
             haptic(30);
-            document.getElementById('homeScreen').classList.remove('active');
             document.getElementById('photosApp').classList.remove('active');
             document.getElementById('geminiApp').classList.remove('active');
             document.getElementById('safariApp').classList.remove('active');
             document.getElementById('notesApp').classList.remove('active');
             document.getElementById('noteDetail').classList.remove('active');
             document.getElementById('photoViewer').classList.remove('active');
-            lockScreen.classList.remove('hidden');
-            document.getElementById('passcodeScreen').classList.remove('active');
+            
+            document.getElementById('homeScreen').classList.add('active');
+            lockScreen.classList.add('hidden'); // Keep lock screen hidden
             wallpaper.classList.remove('blurred');
             lockScreen.classList.remove('blurred');
-            passcodeInput = ""; updateDots();
-            updateHomeButton();
+            document.getElementById('passcodeScreen').classList.remove('active');
         }
 
         function handleHomeClick() {
@@ -1286,13 +1205,6 @@
             haptic(50);
             document.getElementById('photosApp').classList.add('active');
             loadPhotos();
-            updateHomeButton();
-        }
-
-        function closePhotosApp() {
-            haptic(30);
-            document.getElementById('photosApp').classList.remove('active');
-            updateHomeButton();
         }
 
         function loadPhotos() {
@@ -1315,58 +1227,34 @@
             haptic(30);
             document.getElementById('viewerImage').src = photoSrc;
             document.getElementById('photoViewer').classList.add('active');
-            updateHomeButton();
         }
 
         function closePhotoViewer() {
             haptic(30);
             document.getElementById('photoViewer').classList.remove('active');
-            updateHomeButton();
         }
 
         // ============ GEMINI APP FUNCTIONS ============
         function openGeminiApp() {
             haptic(50);
             document.getElementById('geminiApp').classList.add('active');
-            updateHomeButton();
             setTimeout(() => {
                 const chat = document.querySelector('.gemini-chat');
                 chat.scrollTop = chat.scrollHeight;
             }, 450);
         }
 
-        function closeGeminiApp() {
-            haptic(30);
-            document.getElementById('geminiApp').classList.remove('active');
-            updateHomeButton();
-        }
-
         // ============ SAFARI APP FUNCTIONS ============
         function openSafariApp() {
             haptic(50);
             document.getElementById('safariApp').classList.add('active');
-            updateHomeButton();
-        }
-
-        function closeSafariApp() {
-            haptic(30);
-            document.getElementById('safariApp').classList.remove('active');
-            updateHomeButton();
         }
 
         // ============ NOTES APP FUNCTIONS ============
         function openNotesApp() {
             haptic(50);
             document.getElementById('notesApp').classList.add('active');
-            updateHomeButton();
             loadNotesList();
-        }
-
-        function closeNotesApp() {
-            haptic(30);
-            document.getElementById('notesApp').classList.remove('active');
-            document.getElementById('noteDetail').classList.remove('active');
-            updateHomeButton();
         }
 
         function loadNotesList() {
@@ -1397,13 +1285,6 @@
             document.getElementById('noteDetailDate').textContent = note.date;
             document.getElementById('noteDetailBody').textContent = note.content;
             document.getElementById('noteDetail').classList.add('active');
-            updateHomeButton();
-        }
-
-        function closeNoteDetail() {
-            haptic(30);
-            document.getElementById('noteDetail').classList.remove('active');
-            updateHomeButton();
         }
 
         function generateCalendar() {
@@ -1438,15 +1319,10 @@
                 const badge = app.badge ? `<div class="app-badge">${app.badge}</div>` : '';
                 
                 let clickHandler = `haptic(50); alert('Opening ${app.name}...')`;
-                if (app.action === 'photos') {
-                    clickHandler = 'openPhotosApp()';
-                } else if (app.action === 'gemini') {
-                    clickHandler = 'openGeminiApp()';
-                } else if (app.action === 'safari') {
-                    clickHandler = 'openSafariApp()';
-                } else if (app.action === 'notes') {
-                    clickHandler = 'openNotesApp()';
-                }
+                if (app.action === 'photos') clickHandler = 'openPhotosApp()';
+                else if (app.action === 'gemini') clickHandler = 'openGeminiApp()';
+                else if (app.action === 'safari') clickHandler = 'openSafariApp()';
+                else if (app.action === 'notes') clickHandler = 'openNotesApp()';
                 
                 return `<div class="app" onclick="${clickHandler}">
                     <div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div>
