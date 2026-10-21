@@ -24,36 +24,33 @@
             transform-origin: center center;
         }
 
-        /* PERFECT NATIVE MOBILE FIT */
+        /* MOBILE: Full screen, no frame */
 @media (max-width: 450px) {
     body { 
         background: #000; 
         margin: 0; 
         padding: 0; 
         overflow: hidden; 
-        width: 100vw; 
-        height: 100vh;
-        height: 100dvh;
-        touch-action: none;
     }
     .iphone-frame {
-        width: 100% !important;
-        height: 100% !important;
-        transform: none !important;
-        position: relative !important;
-        top: 0 !important;
-        left: 0 !important;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        transform: none;
+        position: fixed;
+        top: 0;
+        left: 0;
     }
     .iphone {
-        width: 100% !important;
-        height: 100% !important;
-        border-radius: 0 !important; 
-        border: none !important; 
-        box-shadow: none !important;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
     }
     .notch { display: none; }
     
-    /* Make everything scale proportionally */
+    /* Scale elements proportionally for mobile */
     .lock-time { font-size: 22vw; }
     .lock-date { font-size: 4.5vw; }
     .key { width: 20vw; height: 20vw; }
@@ -64,28 +61,7 @@
     .dock .app-icon { width: 15vw; height: 15vw; }
     .home-indicator { width: 35vw; }
     .status-bar { padding: 16px 20px 0; }
-    .status-time { font-size: 14px; }
 }
-            .iphone {
-                width: 100%;
-                height: 100%;
-                border-radius: 0; 
-                border: none; 
-                box-shadow: none;
-            }
-            .notch { display: none; }
-            
-            /* Responsive sizing so nothing overflows on narrow screens */
-            .lock-time { font-size: min(86px, 22vw); }
-            .lock-date { font-size: min(17px, 4.5vw); }
-            .key { width: min(78px, 20vw); height: min(78px, 20vw); }
-            .key-number { font-size: min(32px, 8vw); }
-            .key-letters { font-size: min(9px, 2.5vw); }
-            .keypad { grid-template-columns: repeat(3, min(78px, 20vw)); gap: min(18px, 4vw); }
-            .app-icon { width: min(62px, 16vw); height: min(62px, 16vw); font-size: min(32px, 8vw); }
-            .dock .app-icon { width: min(60px, 15vw); height: min(60px, 15vw); }
-            .home-indicator { width: min(134px, 35vw); }
-        }
 
         .iphone {
             width: 390px; height: 844px;
