@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Marsha's iPhone</title>
+    <style>
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif; 
+            -webkit-tap-highlight-color: transparent; user-select: none;
+        }
+        body { 
+            background: #111; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+        
+        .iphone-frame {
+            transform: scale(0.85);
+            transform-origin: center center;
+        }
+
+        @media (max-width: 450px) {
+            body {
+                background: #000;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Prevents scrolling */
+            }
+            .iphone-frame {
+                /* Automatically calculates the perfect scale to fit your screen */
+                transform: scale(calc(min(100vw / 390, 100dvh / 844)));
+                transform-origin: center center;
+            }
+            .iphone {
+                /* Removes the phone frame on mobile so it feels like a real app */
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+
+        .iphone {
+            width: 390px; height: 844px;
+            border-radius: 45px; position: relative; overflow: hidden;
+            background: #000; 
+            box-shadow: 0 0 0 10px #1a1a1a, 0 0 0 12px #000, 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .wallpaper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+        }
+        .wallpaper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .wallpaper.blurred img {
+            filter: blur(35px) brightness(0.5);
+            transform: scale(1.15);
+            transition: all 0.5s ease;
+        }
+        
+        .notch {
+            position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 1000;
+        }
+
+        .status-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 32px 0; position: relative; z-index: 900; color: white;
+        }
+        .status-time { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+        .status-icons { display: flex; align-items: center; gap: 6px; }
+        .status-icons svg { fill: white; display: block; }
+
+        .lock-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 500; 
+            will-change: filter, transform, opacity;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        .lock-screen.blurred {
+            filter: blur(30px) brightness(0.4);
+            transform: scale(1.1);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .lock-screen.hidden { 
+            transform: translateY(-100%); opacity: 0; pointer-events: none; 
+        }
+
+        .lock-content {
+            width: 100%; display: flex; flex-direction: column; align-items: center;
+            margin-top: 20px;
+        }
+
+        .lock-icon-top { margin-bottom: 10px; opacity: 0.9; }
+        .lock-icon-top svg { width: 12px; height: 15px; fill: white; }
+
+        .lock-date {
+            font-size: 17px; font-weight: 500; color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3); margin-bottom: 5px;
+        }
+
+        .lock-time { 
+            font-size: 86px; font-weight: 200; letter-spacing: -2px;
+            color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-variant-numeric: tabular-nums; line-height: 1;
+        }
+
+        .lock-bottom {
+            position: absolute; bottom: 40px; width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .lock-buttons {
+            display: flex; justify-content: space-between; width: 82%; margin-bottom: 25px;
+        }
+
+        .lock-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .lock-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
+        .lock-btn svg { width: 22px; height: 22px; fill: white; }
+
+        .swipe-text { 
+            font-size: 14px; color: white; opacity: 0.8; margin-bottom: 10px; cursor: pointer; 
+        }
+
+        .home-indicator { 
+            width: 134px; height: 5px; background: white; border-radius: 10px; opacity: 0.9; cursor: pointer; 
+        }
+
+        .passcode-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 600; opacity: 0; pointer-events: none; 
+            transition: opacity 0.3s ease;
+            padding-top: 100px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .passcode-screen.active { opacity: 1; pointer-events: all; }
+
+        .passcode-title { 
+            font-size: 20px; font-weight: 400; color: white; margin-bottom: 30px;
+        }
+
+        .passcode-dots { display: flex; gap: 18px; margin-bottom: 50px; }
+        .passcode-dot {
+            width: 12px; height: 12px; border-radius: 50%; 
+            border: 1.5px solid rgba(255,255,255,0.8);
+            transition: all 0.2s; background: transparent;
+        }
+        .passcode-dot.filled { background: white; border-color: white; }
+        .passcode-dot.shake { animation: shake 0.4s; border-color: #ff3b30; background: #ff3b30; }
+
+        @keyframes shake { 
+            0%, 100% { transform: translateX(0); } 
+            25% { transform: translateX(-8px); } 
+            75% { transform: translateX(8px); } 
+        }
+
+        .keypad { 
+            display: grid; 
+            grid-template-columns: repeat(3, 78px);
+            gap: 18px;
+            justify-content: center;
+        }
+
+        .key {
+            width: 78px; height: 78px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .key:active { background: rgba(255, 255, 255, 0.35); transform: scale(0.93); }
+        .key-number { font-size: 32px; font-weight: 400; color: white; line-height: 1; }
+        .key-letters { font-size: 9px; font-weight: 500; color: white; letter-spacing: 1.5px; margin-top: 2px; opacity: 0.9; }
+
+        .passcode-footer { 
+            position: absolute; bottom: 50px; width: 100%; 
+            display: flex; justify-content: space-between; padding: 0 60px;
+        }
+        .passcode-btn { font-size: 17px; color: white; cursor: pointer; font-weight: 400; opacity: 0.9; }
+        .passcode-btn.delete { opacity: 0; transition: opacity 0.2s; }
+        .passcode-btn.delete.active { opacity: 0.9; }
+
+        .home-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 60px 22px 30px; display: flex; flex-direction: column;
+            z-index: 1; opacity: 0; pointer-events: none; transform: scale(0.95);
+            transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .home-screen.active { opacity: 1; pointer-events: all; transform: scale(1); }
+
+        .widgets { display: flex; gap: 12px; margin-bottom: 25px; }
+        .widget { 
+            flex: 1; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); 
+            border-radius: 22px; padding: 14px; 
+        }
+        .weather-widget { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+        .weather-city { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .weather-temp { font-size: 46px; font-weight: 200; margin: 5px 0; }
+        .weather-icon { font-size: 28px; }
+        .weather-desc { font-size: 13px; opacity: 0.9; }
+
+        .calendar-widget { background: white; color: #000; }
+        .cal-month { font-size: 15px; font-weight: 600; color: #ff3b30; margin-bottom: 6px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; text-align: center; font-size: 11px; }
+        .cal-day-name { color: #8e8e93; font-weight: 500; padding: 2px 0; }
+        .cal-day-name:first-child { color: #ff3b30; }
+        .cal-day { padding: 4px 0; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .cal-day.today { background: #ff3b30; color: white; font-weight: 600; }
+
+        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px 12px; margin-bottom: auto; }
+        .app { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.1s; }
+        .app:active { transform: scale(0.9); }
+        .app-icon {
+            width: 62px; height: 62px; border-radius: 14px; display: flex; justify-content: center; align-items: center;
+            font-size: 32px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); position: relative; overflow: hidden;
+        }
+        .app-badge {
+            position: absolute; top: -4px; right: -4px; background: #ff3b30; color: white; font-size: 12px; font-weight: 700;
+            width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .app-name { font-size: 11px; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-weight: 500; }
+
+        .dock {
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(30px);
+            border-radius: 38px; padding: 16px 12px; display: flex; justify-content: space-around; margin-top: 10px;
+        }
+        .dock .app-icon { width: 60px; height: 60px; border-radius: 16px; box-shadow: none; }
+
+        /* ============ PHOTOS APP ============ */
+        .photos-app {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #FFFFFF;
+            z-index: 700;
+            display: flex; flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            overflow: hidden;
+            color: #000;
+        }
+        .photos-app.active { transform: translateY(0); }
+
+        .photos-nav-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 15px 10px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid #C6C6C8;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .nav-btn {
+            background: none; border: none; color: #007AFF; font-size: 17px;
+            display: flex; align-items: center; gap: 4px; cursor: pointer; font-weight: 400;
+        }
+        .nav-btn:active { opacity: 0.6; }
+        .nav-title { font-size: 17px; font-weight: 600; color: #000; }
+        
+        .photos-section-header {
+            font-size: 20px; font-weight: 700; color: #000;
+            padding: 12px 15px;
+            background: #FFFFFF;
+            position: sticky; top: 95px; 
+            z-index: 15;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            flex: 1;
+            overflow-y: auto;
+            background: #FFFFFF;
+            padding-bottom: 80px;
+        }
+        .photo-thumb {
+            aspect-ratio: 1;
+            background: #E5E5EA;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .photo-thumb:active { opacity: 0.7; }
+
+        .photos-tab-bar {
+            position: absolute; bottom: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid #C6C6C8;
+            display: flex; justify-content: space-around;
+            padding: 8px 0 25px;
+            z-index: 20;
+        }
+        .tab-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: #8E8E93; font-size: 10px; font-weight: 500; cursor: pointer;
+        }
+        .tab-item.active { color: #007AFF; }
+        .tab-item svg { width: 24px; height: 24px; fill: currentColor; }
+
+        /* ============ GEMINI APP ============ */
+        .gemini-app {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #FFFFFF;
+            z-index: 700;
+            display: flex; flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            color: #000;
+        }
+        .gemini-app.active { transform: translateY(0); }
+
+        .gemini-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 50px 15px 12px;
+            background: #FFFFFF;
+            position: sticky; top: 0; z-index: 20;
+            border-bottom: 1px solid #E8EAED;
+        }
+        .gemini-back {
+            background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;
+        }
+        .gemini-back svg { width: 24px; height: 24px; fill: #5F6368; }
+        .gemini-title { font-size: 20px; font-weight: 500; color: #5F6368; }
+
+        .gemini-chat {
+            flex: 1; overflow-y: auto; padding: 20px 16px;
+            display: flex; flex-direction: column; gap: 24px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-msg { display: flex; gap: 12px; max-width: 92%; }
+        .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-msg.ai { align-self: flex-start; }
+
+        .chat-avatar {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600;
+        }
+        .chat-avatar.user-av { background: #E8EAED; color: #5F6368; }
+        .chat-avatar.gemini-av { 
+            background: conic-gradient(from 180deg at 50% 50%, #4285F4, #9B72CB, #D96570, #4285F4);
+        }
+        .chat-avatar.gemini-av svg { width: 18px; height: 18px; fill: white; }
+
+        .chat-bubble {
+            padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.55;
+        }
+        .chat-msg.user .chat-bubble { 
+            background: #F0F4F9; color: #000; border-bottom-right-radius: 4px; 
+        }
+        .chat-msg.ai .chat-bubble { 
+            background: transparent; color: #202124; padding-left: 0; 
+        }
+        .chat-msg.ai .chat-bubble strong { font-weight: 600; color: #000; }
+        .chat-msg.ai .chat-bubble br { margin-bottom: 8px; }
+
+        .gemini-input-area {
+            padding: 12px 16px 25px;
+            background: #FFFFFF;
+            display: flex; align-items: center; gap: 12px;
+            border-top: 1px solid #E8EAED;
+        }
+        .gemini-input {
+            flex: 1; background: #F0F4F9; border: none; border-radius: 24px;
+            padding: 14px 18px; font-size: 15px; color: #5F6368; cursor: default;
+        }
+        .gemini-actions { display: flex; gap: 8px; }
+        .gemini-action-btn {
+            width: 40px; height: 40px; border-radius: 50%; background: #F0F4F9;
+            display: flex; align-items: center; justify-content: center; cursor: default;
+        }
+        .gemini-action-btn svg { width: 20px; height: 20px; fill: #5F6368; }
+
+        /* ============ SAFARI APP ============ */
+        .safari-app {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #F2F2F7;
+            z-index: 700;
+            display: flex; flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            color: #000;
+        }
+        .safari-app.active { transform: translateY(0); }
+
+        .safari-top-bar {
+            display: flex; align-items: center; gap: 12px;
+            padding: 50px 12px 10px;
+            background: #F2F2F7;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .safari-nav-btn {
+            background: none; border: none; cursor: pointer; padding: 4px;
+        }
+        .safari-nav-btn.disabled svg { fill: #C7C7CC; }
+        .safari-nav-btn svg { width: 22px; height: 22px; fill: #007AFF; }
+        
+        .safari-url-bar {
+            flex: 1; background: #FFFFFF; border-radius: 10px;
+            padding: 8px 12px; font-size: 15px; color: #000;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .safari-url-bar svg { width: 14px; height: 14px; fill: #8E8E93; }
+        .safari-url-text { color: #000; font-weight: 400; }
+
+        .safari-content {
+            flex: 1; overflow-y: auto; background: #FFFFFF;
+        }
+
+        .bbc-article {
+            padding: 20px 16px 40px;
+            font-family: "ReithSerif", "Georgia", serif;
+        }
+        .bbc-logo {
+            background: #B80000; color: white; font-family: sans-serif;
+            font-weight: 700; font-size: 18px; padding: 4px 8px;
+            display: inline-block; margin-bottom: 15px; letter-spacing: -1px;
+        }
+        .bbc-headline {
+            font-size: 28px; font-weight: 700; line-height: 1.2;
+            color: #111; margin-bottom: 12px;
+        }
+        .bbc-meta {
+            font-family: -apple-system, sans-serif; font-size: 13px; color: #505050;
+            margin-bottom: 20px; line-height: 1.5;
+        }
+        .bbc-meta strong { color: #111; }
+        .bbc-intro {
+            font-size: 18px; font-weight: 600; line-height: 1.5;
+            color: #111; margin-bottom: 20px;
+        }
+        .bbc-image {
+            width: 100%; border-radius: 4px; margin: 20px 0 8px;
+        }
+        .bbc-text {
+            font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 20px;
+        }
+        .bbc-subtitle {
+            font-size: 22px; font-weight: 700; color: #111;
+            margin: 30px 0 15px; line-height: 1.3;
+        }
+        .bbc-quote {
+            font-size: 18px; font-style: italic; color: #333;
+            border-left: 3px solid #B80000; padding-left: 15px;
+            margin: 20px 0; line-height: 1.5;
+        }
+
+        .safari-bottom-bar {
+            background: #F2F2F7;
+            border-top: 1px solid #D1D1D6;
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 10px 0 25px;
+        }
+        .safari-bottom-btn {
+            background: none; border: none; cursor: pointer; padding: 8px;
+        }
+        .safari-bottom-btn.disabled svg { fill: #C7C7CC; }
+        .safari-bottom-btn svg { width: 24px; height: 24px; fill: #007AFF; }
+
+        /* ============ NOTES APP ============ */
+        .notes-app {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #F2F2F7;
+            z-index: 700;
+            display: flex; flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            color: #000;
+        }
+        .notes-app.active { transform: translateY(0); }
+
+        .notes-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 16px 10px;
+            background: #F2F2F7;
+            position: sticky; top: 0; z-index: 20;
+        }
+        .notes-header-btn {
+            background: none; border: none; color: #007AFF; font-size: 17px;
+            cursor: pointer; font-weight: 400;
+        }
+        .notes-header-btn:active { opacity: 0.6; }
+        .notes-header-title { font-size: 17px; font-weight: 600; color: #000; }
+
+        .notes-list {
+            flex: 1; overflow-y: auto; padding: 0 16px 30px;
+        }
+        .note-item {
+            background: #FFFFFF;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .note-item:active { background: #E5E5EA; }
+        .note-item-content { flex: 1; margin-right: 10px; }
+        .note-item-title { font-size: 17px; font-weight: 600; color: #000; margin-bottom: 4px; }
+        .note-item-snippet { font-size: 15px; color: #8E8E93; line-height: 1.3; 
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
+        }
+        .note-item-date { font-size: 15px; color: #8E8E93; white-space: nowrap; margin-top: 2px; }
+
+        /* Note Detail View */
+        .note-detail {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #FFFFFF;
+            z-index: 710;
+            display: flex; flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .note-detail.active { transform: translateY(0); }
+
+        .note-detail-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 50px 16px 10px;
+            background: #F2F2F7;
+            border-bottom: 0.5px solid #C6C6C8;
+        }
+        .note-detail-back {
+            background: none; border: none; color: #007AFF; font-size: 17px;
+            cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 400;
+        }
+        .note-detail-back:active { opacity: 0.6; }
+        .note-detail-share {
+            background: none; border: none; cursor: pointer;
+        }
+        .note-detail-share svg { width: 22px; height: 22px; fill: #007AFF; }
+
+        .note-detail-content {
+            flex: 1; overflow-y: auto; padding: 20px 20px 40px;
+            background: #FFFFFF;
+        }
+        .note-detail-title {
+            font-size: 24px; font-weight: 700; color: #000; margin-bottom: 8px; line-height: 1.2;
+        }
+        .note-detail-date {
+            font-size: 13px; color: #8E8E93; margin-bottom: 20px;
+        }
+        .note-detail-body {
+            font-size: 17px; line-height: 1.5; color: #000; white-space: pre-wrap; word-wrap: break-word;
+        }
+
+        /* ============ PHOTO VIEWER ============ */
+        .photo-viewer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 800;
+            display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .photo-viewer.active { opacity: 1; pointer-events: all; }
+
+        .viewer-top-bar {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 55px 20px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+        }
+        .viewer-back-btn {
+            color: #0a84ff; font-size: 17px; cursor: pointer; background: none; border: none;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .viewer-back-btn:active { opacity: 0.6; }
+        .viewer-top-actions { display: flex; gap: 20px; }
+        .viewer-top-actions svg { width: 22px; height: 22px; fill: #0a84ff; cursor: pointer; }
+
+        .viewer-image {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .viewer-bottom-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 15px 20px 30px;
+            display: flex; justify-content: space-around;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            z-index: 10;
+        }
+        .viewer-bottom-bar svg { width: 24px; height: 24px; fill: #0a84ff; cursor: pointer; }
+
+        .vibrate { animation: vibrate 0.1s; }
+        @keyframes vibrate { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-1px, 0); } 75% { transform: translate(1px, 0); } }
+    </style>
+</head>
+<body>
+
+    <div class="iphone-frame">
+        <div class="iphone" id="iphone">
+            <div class="wallpaper" id="wallpaper">
+                <img id="wallpaperImg" src="" alt="Wallpaper">
+            </div>
+            <div class="notch"></div>
+
+            <div class="status-bar">
+                <span class="status-time" id="status-time">00:00</span>
+                <div class="status-icons">
+                    <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity="0.3"/></svg>
+                    <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/><path d="M8 6a5.5 5.5 0 00-5.5 5.5h2A3.5 3.5 0 018 8a3.5 3.5 0 013.5 3.5h2A5.5 5.5 0 008 6z"/><path d="M8 2.5a9 9 0 00-9 9h2a7 7 0 017-7 7 7 0 017 7h2a9 9 0 00-9-9z"/></svg>
+                    <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" fill="none" stroke-width="1"/><rect x="2.5" y="2.5" width="17" height="7" rx="2" fill="white"/><path d="M23 4v4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+            </div>
+
+            <!-- LOCK SCREEN -->
+            <div class="lock-screen" id="lockScreen">
+                <div class="lock-content">
+                    <div class="lock-icon-top">
+                        <svg viewBox="0 0 14 18"><path d="M7 0C4.24 0 2 2.24 2 5v2H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V8c0-.55-.45-1-1-1h-1V5c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v2H4V5c0-1.66 1.34-3 3-3z"/></svg>
+                    </div>
+                    <div class="lock-date" id="lock-date">Monday, January 1</div>
+                    <div class="lock-time" id="lock-time">00:00</div>
+                </div>
+                
+                <div class="lock-bottom">
+                    <div class="lock-buttons">
+                        <div class="lock-btn" onclick="haptic(50)">
+                            <svg viewBox="0 0 24 24"><path d="M6 2h12v4h-2V4H8v2H6V2zm0 6h12v12c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V8zm4 2v8h4v-8h-4z"/></svg>
+                        </div>
+                        <div class="lock-btn" onclick="haptic(50)">
+                            <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/></svg>
+                        </div>
+                    </div>
+                    <div class="swipe-text" id="swipeText">Swipe up to open</div>
+                    <div class="home-indicator" onclick="handleHomeClick()"></div>
+                </div>
+            </div>
+
+            <!-- PASSCODE SCREEN -->
+            <div class="passcode-screen" id="passcodeScreen">
+                <div class="passcode-title">Enter Passcode</div>
+                <div class="passcode-dots">
+                    <div class="passcode-dot" id="dot1"></div>
+                    <div class="passcode-dot" id="dot2"></div>
+                    <div class="passcode-dot" id="dot3"></div>
+                    <div class="passcode-dot" id="dot4"></div>
+                </div>
+                
+                <div class="keypad">
+                    <div class="key" onclick="enterNumber(1)"><div class="key-number">1</div></div>
+                    <div class="key" onclick="enterNumber(2)"><div class="key-number">2</div><div class="key-letters">ABC</div></div>
+                    <div class="key" onclick="enterNumber(3)"><div class="key-number">3</div><div class="key-letters">DEF</div></div>
+                    <div class="key" onclick="enterNumber(4)"><div class="key-number">4</div><div class="key-letters">GHI</div></div>
+                    <div class="key" onclick="enterNumber(5)"><div class="key-number">5</div><div class="key-letters">JKL</div></div>
+                    <div class="key" onclick="enterNumber(6)"><div class="key-number">6</div><div class="key-letters">MNO</div></div>
+                    <div class="key" onclick="enterNumber(7)"><div class="key-number">7</div><div class="key-letters">PQRS</div></div>
+                    <div class="key" onclick="enterNumber(8)"><div class="key-number">8</div><div class="key-letters">TUV</div></div>
+                    <div class="key" onclick="enterNumber(9)"><div class="key-number">9</div><div class="key-letters">WXYZ</div></div>
+                    <div class="key" style="visibility: hidden; pointer-events: none;"></div>
+                    <div class="key" onclick="enterNumber(0)"><div class="key-number">0</div></div>
+                    <div class="key" onclick="deleteNumber()"><div class="key-number" style="font-size: 24px;"></div></div>
+                </div>
+                
+                <div class="passcode-footer">
+                    <div class="passcode-btn" onclick="cancelPasscode()">Cancel</div>
+                    <div class="passcode-btn delete" id="deleteBtn" onclick="deleteNumber()">Delete</div>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px;" onclick="goHome()"></div>
+            </div>
+
+            <!-- HOME SCREEN -->
+            <div class="home-screen" id="homeScreen">
+                <div class="widgets">
+                    <div class="widget weather-widget">
+                        <div class="weather-city">📍 <span id="weather-city">Jakarta</span></div>
+                        <div class="weather-temp" id="weather-temp">31°</div>
+                        <div class="weather-icon">☀️</div>
+                        <div class="weather-desc" id="weather-desc">Mostly Sunny</div>
+                    </div>
+                    <div class="widget calendar-widget">
+                        <div class="cal-month" id="cal-month">Month</div>
+                        <div class="cal-grid" id="cal-grid"></div>
+                    </div>
+                </div>
+
+                <div class="app-grid" id="app-grid"></div>
+
+                <div class="dock" id="dock"></div>
+                <div class="home-indicator" style="margin-top: 10px;" onclick="goHome()"></div>
+            </div>
+
+            <!-- PHOTOS APP -->
+            <div class="photos-app" id="photosApp">
+                <div class="photos-nav-bar">
+                    <button class="nav-btn" onclick="closePhotosApp()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
+                        Photos
+                    </button>
+                    <div class="nav-title">Recents</div>
+                    <button class="nav-btn">Select</button>
+                </div>
+                <div class="photos-section-header" id="photosSectionHeader">Month Year</div>
+                <div class="photos-grid" id="photosGrid"></div>
+                
+                <div class="photos-tab-bar">
+                    <div class="tab-item">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v8H8V8z"/></svg>
+                        <span>Library</span>
+                    </div>
+                    <div class="tab-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span>For You</span>
+                    </div>
+                    <div class="tab-item active">
+                        <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4V6zm2 2v8h12V8H6zm2 2h8v4H8v-4z"/></svg>
+                        <span>Albums</span>
+                    </div>
+                    <div class="tab-item">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <span>Search</span>
+                    </div>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closePhotosApp()"></div>
+            </div>
+
+            <!-- GEMINI APP -->
+            <div class="gemini-app" id="geminiApp">
+                <div class="gemini-header">
+                    <button class="gemini-back" onclick="closeGeminiApp()">
+                        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                    </button>
+                    <div class="gemini-title">Gemini</div>
+                </div>
+                
+                <div class="gemini-chat">
+                    <div class="chat-msg user">
+                        <div class="chat-avatar user-av">M</div>
+                        <div class="chat-bubble">gimana cara ngelupain orang yg kita suka?</div>
+                    </div>
+                    <div class="chat-msg ai">
+                        <div class="chat-avatar gemini-av">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+                        </div>
+                        <div class="chat-bubble">
+                            Ngelupain orang yang kita suka—apalagi kalau perasaannya cukup dalam—memang butuh waktu dan proses. Otak kita punya kecenderungan untuk terus nyari "asupan" (dopamin) dari ingatan atau kabar tentang dia, makanya makin berusaha keras dilupakan, malah makin sering kepikiran.<br><br>
+                            Tujuannya sebenarnya bukan memaksa ingatan itu hilang total, melainkan mengikis rasa melekatnya sampai sosoknya terasa biasa aja.<br><br>
+                            Berikut beberapa langkah praktis yang bisa kamu coba:<br><br>
+                            <strong>1. Beri Jarak yang Jelas (Out of Sight, Out of Mind)</strong><br>
+                            Media Sosial: Mute, unfollow, atau sembunyikan story dia. Mengintip media sosialnya cuma bakal memicu dan menyegarkan kembali rasa kangen atau penasaran.<br>
+                            Kontak: Hindari chat duluan atau memancing percakapan kalau tidak ada urusan yang benar-benar penting.<br><br>
+                            <strong>2. Alihkan Pikiran Saat Dia Muncul (Catch & Pivot)</strong><br>
+                            Ketika kamu sadar lagi melamunkan dia atau mengulang-ulang kenangan lama, jangan menyalahkan diri sendiri.<br>
+                            Cukup sadari: "Oke, aku lagi kepikiran dia," lalu segera alihkan ke aktivitas nyata: dengarkan lagu, jalan sebentar, bikin kopi/teh, atau kerjakan sesuatu yang butuh fokus.<br><br>
+                            <strong>3. Kembalikan Fokus ke Diri Sendiri</strong><br>
+                            Rasa suka sering bikin kita ngabiskan banyak "ruang pikiran" untuk orang lain. Saatnya ambil balik ruang itu:<br>
+                            • Tekuni kembali hobi yang sempat terbengkalai.<br>
+                            • Cari kegiatan baru yang bikin kamu berkembang (olahraga, belajar skil baru, atau traveling).<br>
+                            • Luangkan waktu bareng teman-teman atau keluarga yang bikin kamu merasa dihargai.<br><br>
+                            <strong>4. Jangan Idealisasikan Dia</strong><br>
+                            Saat menyukai seseorang, kita cenderung cuma mengingat kebaikan atau bayangan indah tentang dia. Ingat-ingat juga realitasnya—mungkin kalian memang tidak cocok, situasinya tidak memungkinkan, atau perasaannya tidak sejalan.<br><br>
+                            Biar strateginya lebih pas dengan situasimu: Apakah orang ini sosok yang masih sering kamu temui setiap hari (seperti teman sekelas/rekan kerja), atau kalian sudah jarang berhubungan secara langsung?
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gemini-input-area">
+                    <div class="gemini-input">Ask me anything...</div>
+                    <div class="gemini-actions">
+                        <div class="gemini-action-btn">
+                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                        </div>
+                        <div class="gemini-action-btn">
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeGeminiApp()"></div>
+            </div>
+
+            <!-- SAFARI APP -->
+            <div class="safari-app" id="safariApp">
+                <div class="safari-top-bar">
+                    <button class="safari-nav-btn disabled" onclick="closeSafariApp()">
+                        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                    </button>
+                    <button class="safari-nav-btn disabled">
+                        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                    </button>
+                    <div class="safari-url-bar">
+                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                        <span class="safari-url-text">bbc.com</span>
+                    </div>
+                    <button class="safari-nav-btn">
+                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    </button>
+                    <button class="safari-nav-btn">
+                        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                    <button class="safari-nav-btn">
+                        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                    </button>
+                </div>
+                
+                <div class="safari-content">
+                    <div class="bbc-article">
+                        <div class="bbc-logo">BBC NEWS</div>
+                        <h1 class="bbc-headline">Dua tahun Prabowo-Gibran – Warga terpaksa 'downgrade' hidup, untuk makan saja pas-pasan</h1>
+                        <div class="bbc-meta">
+
+<img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
+        
+                            <strong>Riana A Ibrahim</strong><br>
+                            Peranan, Jurnalis BBC News Indonesia<br>
+                            Telah diterbitkan<br>
+                            20 Oktober 2026<br>
+                            Waktu membaca: 13 menit
+                        </div>
+                        <p class="bbc-intro">Jurus makan tabungan dan makan hutang yang dilakukan masyarakat sudah tak mempan, maka 'downgrade' hidup jadi pilihan bertahan saat hasil kerja mati-matian tak sepadan.</p>
+                        <p class="bbc-text">Dari memindahkan sekolah anak yang biayanya lebih terjangkau, bermigrasi ke kota lain, berganti jenis bahan bakar, menjual kendaraan, hingga memutuskan oper kredit cicilan rumah impian demi bertahan hidup dan punya bantalan finansial sebagai jaring aman.</p>
+                        <p class="bbc-text">Itulah yang diungkapkan tiga orang warga Indonesia, masing-masing ibu rumah tangga, sopir ojek daring, serta seorang pekerja swasta, kepada BBC News Indonesia.</p>
+                        <p class="bbc-quote">Rahman, sopir ojek online, berkata dengan getir: "Narik dari jam lima pagi sampai jam lima sore itu dapat Rp150.000. Bawa pulang Rp100.000 buat makan sama anak di rumah. Rp50.000 untuk bensin..."</p>
+                        <p class="bbc-quote">Sera Diaz, ibu rumah tangga dengan dua anak, mengaku "kami mulai ambil pinjol untuk menutupi kebutuhan, dan mencoba membuka usaha kue dengan modal dari warisan suami. Tapi enggak berjalan baik..."</p>
+                        <p class="bbc-text">Kisah Rahman dan Sera Diaz itu terungkap ketika Badan Pusat Statistik (BPS) mengumumkan bahwa jumlah penduduk miskin pada Maret 2026 turun 430.000 jiwa atau menjadi 8,07%.</p>
+                        <p class="bbc-text">Namun di saat yang sama, laporan Mandiri Institute menemukan masyakat yang turun kelas tembus 10 juta dalam tujuh tahun terakhir.</p>
+                        <p class="bbc-text">Direktur Eksekutif Institute for Development of Economics and Finance (Indef), Esther Sri Astuti menegaskan kondisi ekonomi warga yang terpuruk pada fenomena 'downgrade' ini bukan karena tidak bekerja keras, tapi dampak dari persoalan ekonomi saat ini.</p>
+                        <p class="bbc-quote">"Mereka sudah bekerja keras. Contoh, ojol itu berapa jam mereka bekerja sampai ada yang meninggal di jalan karena kelelahan. Tapi hidup mereka tidak berubah, masih tetap miskin," kata Esther.</p>
+                        <p class="bbc-text">Di tengah situasi seperti itu, Presiden Prabowo Subianto menargetkan tingkat kemiskinan turun di rentang 6,0-6,5% pada 2027.</p>
+                        <p class="bbc-quote">"Dengan pertumbuhan yang lebih kuat dan APBN yang efektif, kemiskinan di tahun 2027 ditargetkan turun ke rentang 6,0 sampai 6,5% dari target APBN 2026, 6,5 sampai 7,5%," kata Prabowo yang mengaku heran ekonomi tumbuh tapi kelas menengah menyusut.</p>
+                        <p class="bbc-text">Jadi, bagaimana kondisi ekonomi sejauh ini? Apa berkaitan juga dengan kebijakan anggaran dan ekonomi Prabowo-Gibran sepanjang dua tahun memerintah?</p>
+                        <h2 class="bbc-subtitle">'Pemerintahnya efisiensi, rakyatnya ternyata harus ikut juga'</h2>
+                        <p class="bbc-text">Rahman, sopir ojek daring yang biasa beredar di Jakarta sepanjang 10 tahun ini, mengaku situasi ekonomi keluarganya makin sulit selama tiga tahun terakhir.</p>
+                        <p class="bbc-text">Pendapatannya tak banyak berubah, tapi harga-harga kebutuhan pokok makin melambung. Bahkan kenaikan BBM membuatnya beralih dari Pertamax ke Pertalite agar bisa mengisi penuh motornya.</p>
+                        <p class="bbc-quote">"Narik dari jam lima pagi sampai jam lima sore itu dapat Rp150.000. Bawa pulang Rp100.000 buat makan sama anak di rumah. Rp50.000 untuk bensin. Narik cuma sampai sore sejak istri meninggal pas Covid, karena jadi urus rumah dan anak juga," ungkap Rahman.</p>
+                        <p class="bbc-text">Sebelumnya, uang yang dibawa pulang harian itu masih bisa dibelanjakan beras, telur, ayam, minyak goreng, gula, dan sayur. Bahkan masih sisa untuk pegangannya selama bekerja dan kedua anaknya untuk jajan, kadang juga disisihkan untuk disimpan.</p>
+                        <p class="bbc-text">Sekarang, Rahman bersiasat dengan membeli lebih banyak mie instan, tempe tahu, dan sayur. Telur dan ayam dibeli dengan sangat terbatas karena harganya melonjak. Untuk beras, Rahman tetap membeli 1 liter tapi untuk bertahan dua hari. Tak ada lagi juga simpanan atau pegangan rutin untuk kedua anaknya.</p>
+                        <p class="bbc-text">Ia pun kini mengakali dengan sengaja membawa bekal saat bekerja atau membawa uang pas-pasan untuk makan siang jika lokasi pengantarannya tak dekat rumah.</p>
+                        <p class="bbc-quote">"Kalau baca berita, pemerintahnya efisiensi. Tapi ini kitanya juga kena efisiensi mulu. BBM mahal, ngantre. Kalau enggak beli, enggak narik, anak enggak makan entar. Tapi ya makan yang udah seadanya jadi diada-adain sekarang," ujar Rahman.</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/f2c0/live/21164450-cc0b-11f1-9a39-31b474234113.jpg" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-text">Sera Diaz, ibu rumah tangga dengan dua anak, akhirnya memutuskan kembali ke Sumedang, Jawa Barat. Sebab, ekonomi keluarganya makin tercekik saat memaksa bertahan sekitar setahun di Bandung, Jawa Barat, usai suaminya terdampak eifisiensi kantor.</p>
+                        <p class="bbc-quote">"Memang kondisi kami ngepas banget, karena hanya mengandalkan gaji suami yang UMR Kota Bandung. Pegangan juga enggak punya. Setelah suami kena efisiensi 2025 dan dipaksa resign padahal kontrak kerja masih lama, semuanya mulai berasa," tutur Sera.</p>
+                        <p class="bbc-text">Apalagi karena suaminya masih ada cicilan pinjaman karyawan yang berjalan, tak sepeser pun gaji dan pesangon diperolehnya setelah pemutusan hubungan kerja.</p>
+                        <p class="bbc-quote">"Dari sini lah, keuangan keluarga kami makin goyah. Kami mulai ambil pinjol untuk menutupi kebutuhan, dan mencoba membuka usaha kue dengan modal dari warisan suami. Tapi enggak berjalan baik, suami akhirnya memutuskan cari kerja lagi," ungkap Sera.</p>
+                        <p class="bbc-text">Upaya memperoleh kerja tentu tak mudah sehingga suaminya menjajal juga menambal keuangan dengan menjadi sopir ojek online.</p>
+                        <p class="bbc-text">Namun, perlahan hal-hal mendasar dalam hidupnya tetap harus 'downgrade' untuk bertahan hidup karena pengeluaran selalu lebih besar dari pemasukan, meski sudah dipangkas.</p>
+                        <p class="bbc-text">Belanja kebutuhan pokok yang tadinya dipenuhi tiap bulan berubah menjadi harian. Dari stok beras 15 kilogram per bulan sebesar Rp240.000 ditambah anggaran bahan makanan yang lain, menjadi alokasi anggaran makan Rp35.000 per hari yang sudah temasuk beras.</p>
+                        <p class="bbc-text">Kuota paket internet juga ikut berubah harian. Selain itu, jajan untuk anak dan keluarga juga sudah tidak ada.</p>
+                        <p class="bbc-text">Iuran BPJS juga turun menjadi kelas tiga, karena sudah tidak mampu membayar iuran BPJS kelas satu yang semula ditanggung kantor suami.</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/7ae4/live/74fc9460-cc0c-11f1-a64c-550be9e3c66b.jpg" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-quote">"Tapi keuangan tetap defisit terus. Mei-Juni ini benar-benar sampai titik terendah karena kondisinya masih ngontrak dan udah enggak punya pegangan lagi untuk bayar bulan depannya," kata Sera.</p>
+                        <p class="bbc-quote">"Uang sekolah anak juga nunggak beberapa bulan. Anak kedua juga harus bolak-balik rumah sakit untuk terapi wicara dan fisioterapi, serta obat epilepsi yang akhirnya terhenti terapinya karena butuh ongkos juga ke rumah sakit," imbuh Sera.</p>
+                        <p class="bbc-text">Ia juga memutuskan gagal bayar pinjol yang nyaris menyentuh Rp10 juta. Peralatan usaha berupa mixer dan freezer juga terpaksa dijual sebagai pegangan alih-alih jatuh pada pinjol lagi.</p>
+                        <p class="bbc-text">Dengan keadaan itu, Sera ditawari pindah ke rumah orang tuanya di Sumedang.</p>
+                        <p class="bbc-quote">"Ya setidaknya meringankan karena tidak perlu uang kontrakan. Tapi anak pindah sekolah dengan meninggalkan tunggakan di sekolah lamanya yang sekarang masih dicicil. Sekolah di Bandung, tadinya swasta. Tapi sekarang pindah ke sekolah negeri di Sumedang karena bebas SPP juga," tutur Sera.</p>
+                        <p class="bbc-text">Belum lama bermigrasi, suaminya diterima kerja di Sumedang. Meski gaji mengikuti UMR daerah yang lebih rendah dibanding di Bandung, ia sangat bersyukur karena sudah ada penghasilan tetap dan waktu kerja yang jelas.</p>
+                        <p class="bbc-text">Sebab saat menjalankan usaha kue sambil menjadi ojek online, suaminya sering baru bisa istirahat pada dini hari. Sedangkan, suaminya membantu berjualan dari pagi sampai sore sembari 'ngojek'. Malamnya, ia kembali membantu produksi kue.</p>
+                        <p class="bbc-quote">"Sekarang, waktu kerjanya pasti. Walau ekonomi kembali belum sepenuhnya kembali, karena harus bayar pinjaman dan utang sebelumnya. Memang WNI harus kuat. Parah banget ekonomi sekarang. Benar-benar cuma bisa mengandalkan pertolongan Tuhan."</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/3b6a/live/2a04d670-cc0c-11f1-9a39-31b474234113.jpg" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-text">Bima, pekerja swasta, memutuskan untuk melepas rumah yang dibelinya bersama istri di Tangerang Selatan. Saat ini, ia rutin membayar kredit rumah sebesar Rp4 juta per bulan. Namun, cicilan KPR yang sisa 15 tahun itu sudah ditawarkan untuk dioper bagi yang berminat.</p>
+                        <p class="bbc-quote">"Alasannya multifaktor. Pertama, pertimbangan keluarga karena ada perubahan di hidup setelah adik meninggal dan harus menemani Mama di rumah. Kedua, kami memperhatikan situasi ekonomi di era Prabowo kok sepertinya malah makin suram untuk kelas menengah," tutur Bima.</p>
+                        <p class="bbc-text">Melepas rumah yang ditinggali selama hampir delapan tahun diakuinya tidak mudah. Namun setelah dua tahun pindah ke Bekasi untuk mendampingi orang tua, rumah tersebut hanya ditengok sebulan sekali.</p>
+                        <p class="bbc-text">Bahkan belakangan menjadi tiga bulan sekali hingga disadari rumah itu butuh renovasi yang menghabiskan dana sekitar Rp5,5 juta.</p>
+                        <p class="bbc-text">Ia dan istri sempat berpikir untuk menyewakan rumahnya agar tetap terawat, tapi tak kunjung mendapatkan orang yang tepat. Karena itu, menjual rumah yang dibeli seharga Rp475 juta itu dirasa lebih tepat ketika tabungan kian menipis tanpa investasi.</p>
+                        <p class="bbc-quote">"Kami mikirnya, kami harus mengantisipasi segala macam yang mungkin terjadi di masa depan, entah ada krisis atau apa. Kami mengurangi yang bisa kami kurangi karena kami harus punya simpanan untuk bantalan juga," ujar Bima.</p>
+                        <p class="bbc-text">Selain itu, ia menyadari prospek perusahaan tempatnya bekerja juga sedang menurun. Ia khawatir menjadi sasaran pemutusan hubungan kerja. Langkah menjual rumahnya sejak sekarang dilakukan karena jenis rumahnya ini disebutnya "kelas tanggung".</p>
+                        <p class="bbc-quote">"Untuk kelas bawah bukan, kelas atas juga bukan. Kelas nanggung ini rumahnya. Bakal susah kalau enggak segera jual. Apalagi melihat bisnis perusahaan sekarang, bisa jadi abis ini aku yang kena (PHK)," kata Bima.</p>
+                        <p class="bbc-text">Tak hanya rumah, kondisi ekonomi sekarang juga membuatnya menjual satu dari dua sepeda motor di rumahnya. Ini juga berkaitan dengan kenaikan BBM. Dulu, bensin seharga Rp50.000 bisa bertahan tiga hari. Kini, hanya bertahan dua hari dengan rute rumah-kantor, Bekasi-Palmerah-Bekasi, beberapa hari sekali.</p>
+                        <p class="bbc-text">Dari segi penghasilan, gabungan gaji Bima dan istri sekitar Rp19 juta. Uang itu digunakan untuk melunasi cicilan, biaya transport keduanya, listrik, air, uang lingkungan, asuransi kesehatan keduanya dan orang tua, hingga kebutuhan sehari-hari, seperti bahan makan, perlengkapan mandi, dan perlengkapan kebersihan rumah.</p>
+                        <p class="bbc-quote">"Biasanya masih ada sisa sekitar Rp3,8 juta. Biasanya dijadikan cadangan darurat kalau ada apa-apa dalam sebulan atau makan di luar bersama keluarga, atau teman," ungkapnya.</p>
+                        <h2 class="bbc-subtitle">Bagaimana kondisi ekonomi sejauh ini?</h2>
+                        <p class="bbc-text">Apabila memperhatikan situasi belakangan ini, para pakar menilai kondisi ekonomi Indonesia sedang "tidak baik-baik saja".</p>
+                        <p class="bbc-text">Dosen Departemen Ilmu Ekonomi Fakultas Ekonomika dan Bisnis Universitas Gadjah Mada (UGM), Wisnu Setiadi Nugroho berkata bahwa di atas kertas, BPS memang menunjukkan turunnya persentase penduduk miskin menjadi 8,07%. Pengeluaran konsumsi rumah tangga pada triwulan kedua juga sebesar 5,06%.</p>
+                        <p class="bbc-text">Data Indeks Keyakinan Konsumen (IKK) pada September 2026 yang dirilis bulanan oleh Bank Indonesia (BI) juga masih berada pada level optimis, meski angkanya turun tipis menjadi 118,1.</p>
+                        <p class="bbc-quote">"Semuanya kalau kita lihat di atas kertas, hasilnya baik atau hijau. Tapi masalahnya angka-angka agregat itu tidak memberitahu tentang siapa yang menopang atau mendukung angka-angka itu menjadi baik," ujar Wisnu.</p>
+                        <p class="bbc-text">Ia menambahkan indeks milik BI tersebut diambil dari rerata persepsi terkait kondisi saat ini yaitu sebesar 107,5 dan ekspektasi masyarakat selama enam bulan ke depan yakni 128,7.</p>
+                        <p class="bbc-quote">"Jadi yang menarik, indeks ini adalah harapan. Bukan keadaan saat ini. Masyarakat kita berharap keadaan membaik dengan angka sampai 128,7, khususnya enam bulan ke depan, tapi menilai kondisi saat ini masih agak sulit atau pas-pasan," kata Wisnu.</p>
+                        <p class="bbc-text">Jika ditelaah lebih lanjut, maka kelompok dari kelas menengah, calon kelas menengah, dan rentan miskin merupakan penopang angka dalam data ekonomi di atas.</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/fbd4/live/64241060-cd32-11f1-a64c-550be9e3c66b.png" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-text">Meski menjadi penopang, kelompok ini tengah mengalami pelemahan daya beli. Ini tercermin pada survei penjual eceran milik BI yang menampilkan persentase penjualan yang turun.</p>
+                        <p class="bbc-quote">"Indikasi pembelian barang sehari-hari itu cenderung menjadi stagnan atau malah turun," ujar Wisnu.</p>
+                        <p class="bbc-text">LPEM FEB Universitas Indonesia (UI) juga menemukan pelambatan konsumsi rumah tangga pada kuartal dua 2026 di tengah nilai tukar rupiah yang merosot.</p>
+                        <p class="bbc-text">Ada empat komponen utama yang berkurang tingkat konsumsinya yaitu: komponen makanan dan minuman, komponen transportasi dan komunikasi, komponen restoran dan hotel, serta komponen pakaian, alas kaki, dan perawatan.</p>
+                        <p class="bbc-text">Bertumbuhnya ekonomi sebesar 5,29% pun ternyata dominan ditopang oleh kontribusi pengeluaran pemerintah yang lebih kuat dari perkiraan melalui programnya. Kondisi semacam ini dinilai rentan bagi keberlanjutan ekonomi ke depan.</p>
+                        <p class="bbc-text">Hasil riset terbaru NEXT Indonesia Center bertajuk "Waspadai Sinyal Tekanan Daya Beli" juga menunjukkan daya beli yang melemah karena masyarakat saat ini dihadapkan pada situasi pelik saat pendapatan yang tidak bertambah makin tergerus oleh tingginya inflasi bahan pokok.</p>
+                        <p class="bbc-text">Adapun rerata upah pekerja pada 2025-2026 di tiap provinsi, baik formal maupun informal, tercatat lebih rendah dibandingkan Upah Minimum Provinsi (UMP) yang turut melambat beberapa tahun terakhir.</p>
+                        <p class="bbc-text">Akibatnya, jumlah kelompok ini juga terus menyusut. Menurut Wisnu, hal ini patut diduga karena bantalan finansial para kelas menengah yang menghilang karena makin terkikis ketidakseimbangan pendapatan dan pengeluaran.</p>
+                        <p class="bbc-text">Di sisi lain, garis kemiskinan nasional dipatok dengan pengeluaran Rp669.235 per kapita per bulan. Warga yang pengeluarannya di atas itu pun dianggap kelas menengah atau menuju ke sana.</p>
+                        <p class="bbc-text">Padahal dari segi keseharian, mereka mati-matian bertahan hidup. Bahkan untuk kebutuhan primer, seperti makan saja sudah terasa mencekik.</p>
+                        <p class="bbc-text">Bank Dunia menganjurkan perumusan kebijakan domestik lebih relevan mengacu pada garis kemiskinan nasional ini.</p>
+                        <p class="bbc-text">Namun, Wisnu berkata metodologi penetapan garis ini belum pernah dirombak sejak 1998 padahal pola konsumsi masyarakat telah berubah total dalam dua setengah dekade terakhir.</p>
+                        <p class="bbc-quote">"Ini yang menunjukkan kenapa fenomena downgrade itu bisa jadi nyata. Meskipun statisik kemiskinan membaik, itu hanya mengukur yang di bawah garis," kata Wisnu.</p>
+                        <p class="bbc-quote">"Sedangkan downgrade malah mengukur yang di atas garis, khususnya kelas menengah hingga kelas rentan. Dari sini, kita harus jujur bertanya apakah kelompok ini kehilangan ruang gerak sehingga melakukan downgrading. Sayangnya juga, rilis pemerintah tidak memuat ini," kata Wisnu.</p>
+                        <h2 class="bbc-subtitle">Bagaimana kaitan dengan kebijakan anggaran dan ekonomi Prabowo-Gibran selama ini?</h2>
+                        <p class="bbc-text">Sekretaris Departemen Ilmu Ekonomi FEB UGM, Wisnu Setiadi Nugroho dan Direktur Eksekutif Institute for Development of Economics and Finance (Indef), Esther Sri Astuti berkata kondisi ekonomi saat ini tidak bisa dilepaskan dari warisan rezim sebelumnya.</p>
+                        <p class="bbc-text">Selain dampak pandemi, deindustrialisasi juga berpengaruh karena pekerjaan formal tidak tumbuh secepat angkatan kerja yang sedang mengalami bonus demografi.</p>
+                        <p class="bbc-quote">"Karena itu, upah riil akhirnya tertinggal dari biaya hidup dan itu permasalahan yang cukup struktural. Bukan hanya dari satu atau dua pemerintahan saja," ujar Wisnu.</p>
+                        <p class="bbc-text">Esther menambahkan hutang-hutang yang meningkat selama 10 tahun masa pemerintahan Joko Widodo juga memiliki efek pada kondisi ekonomi saat ini.</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/b864/live/8c103380-cc09-11f1-a64c-550be9e3c66b.jpg" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-text">Lalu, bagaimana dengan kebijakan Prabowo-Gibran selama dua tahun ini?</p>
+                        <p class="bbc-text">Alih-alih menuntaskan pekerjaan rumah dari rezim sebelumnya, kebijakan pemerintahan kali ini dinilai justru makin menyulitkan masyarakat secara ekonomi.</p>
+                        <p class="bbc-text">Menurut Wisnu, kebijakan anggaran untuk berbagai program prioritas populis, termasuk Makan Bergizi Gratis (MBG) meski telah dipangkas tetap berdampak pada kondisi ekonomi sejauh ini. Apalagi di tengah tekanan ekonomi global yang perlu menjaga daya beli masyarakat, program populis itu malah memberi efek sebaliknya.</p>
+                        <p class="bbc-text">Kebijakan fiskal, kata dia, harus tepat sasaran. Salah satunya bisa dicapai dengan langkah jangka pendek melalui program bantuan sosial, program Indonesia Pintar (PIP), dan KIP kuliah. Sayangnya, anggaran untuk keduanya kena efisiensi.</p>
+                        <p class="bbc-quote">"Ada fungsi penjaga daya beli masyarakat, memiliki fungsi menurunkan beban masyarakat, dan lain-lain. Dari sisi daya beli, masyarakat butuh yang jangka pendek saat ini. Apalagi transfer tunai punya efek mengganda karena uangnya berputar di tengah masyarakat," kata Wisnu.</p>
+                        <p class="bbc-text">Sedangkan MBG, uangnya tidak masuk ke rumah tangga. Namun, duitnya masuk langsung ke operator, SPPG, dan rekanan sehingga tidak punya efek ganda yang cukup di tengah masyarakat.</p>
+                        <p class="bbc-text">Selain itu, Wisnu menyoroti kelas menengah saat ini yang hampir tidak punya tempat dalam desain kebijakan.</p>
+                        <p class="bbc-text">Padahal pemasukan dari bayar pajak lebih banyak berasal dari kelas menengah, terutama yang langsung dipotong oleh perusahaan. Namun, para kelas menengah ini tidak disiapkan program apapun yang bisa mendukung mereka.</p>
+                        <p class="bbc-quote">"Fenomena downgrade memang bukan diciptakan oleh kebijakan dua tahun saja. Tapi komposisi APBN atau belanja yang dipilih pemerintah saat ini belum dirancang atau belum didesain untuk memperbaiki masalah struktural yang sudah terjadi dari 2019."</p>
+                        <p class="bbc-text">Sementara itu, Esther memilih fokus pada jangka panjang. Bansos bisa dilanjutkan, tapi tidak bisa terus menerus diandalkan secara berkelanjutan untuk masyarakat.</p>
+                        <p class="bbc-text">Pendidikan dan penguatan lapangan kerja sebagai jaring aman dinilai lebih potensial untuk keluar dari kemiskinan dan kemudian mampu bertahan sebagai kelas menengah yang kokoh.</p>
+                        <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/10c9/live/d9a4dc10-cc0c-11f1-a64c-550be9e3c66b.jpg" class="bbc-image" alt="BBC Image">
+                        <p class="bbc-text">Sementara itu, Centre of Economic and Law Studies (Celios) dan Kabinet Bayangan mengeluarkan "Rapor Kinerja 2 Tahun Kinerja Prabowo-Gibran".</p>
+                        <p class="bbc-text">Sebanyak 53% responden merasa kondisi ekonomi rumah tangganya lebih buruk dibandingkan satu tahun yang lalu. Adapun 62% responden menilai negatif upaya pemerintah dalam mengatasi pengangguran dan membuka lapangan kerja. Artinya, kebijakan pemerintah di bidang ketenagakerjaan dinilai tidak efektif.</p>
+                        <p class="bbc-quote">"Kebijakan pemerintah yang tidak efektif dalam mengatasi kondisi ekonomi dan penciptaan lapangan kerja pada akhirnya berdampak pada kondisi ekonomi rumah tangga masyarakat," ujar Direktur Eksekutif Celios, Bhima Yudhistira.</p>
+                        <p class="bbc-text">Kemudian, sebanyak 82% responden menilai pajak dan pungutan pemerintah terlalu berat. Kondisi ini mengindikasikan bahwa kebijakan penerimaan negara berisiko menambah tekanan ekonomi masyarakat, terutama ketika kemampuan rumah tangga untuk memenuhi kebutuhan sehari-hari masih menjadi tantangan.</p>
+                        <p class="bbc-quote">"Penggunaan anggaran diluar ketentuan demi memuluskan program prioritas juga menyebabkan rentetan risiko menular dari APBN ke perbankan dan ujungnya merugikan pembayar pajak."</p>
+                        <h2 class="bbc-subtitle">Apa tanggapan pemerintah?</h2>
+                        <p class="bbc-text">Menteri Koordinator Perekonomian, Airlangga Hartarto berkata fundamental ekonomi Indonesia tetap solid. Kebijakan pemerintah selalu bertujuan untuk meningkatkan kesejahteraan masyarakat.</p>
+                        <p class="bbc-text">Salah satunya pemerintah mengupayakan pembukaan lapangan kerja untuk menekan tingkat rasio gini. Program ketenagakerjaan seperti vokasi dan magang juga digencarkan pemerintah.</p>
+                        <p class="bbc-quote">"Kita terus mendorong penurunan pengangguran dan kita dorong agar penciptaan lapangan kerja semakin tinggi. Salah satunya juga mengganjal dengan vokasi dan juga magang sehingga bisa menekan rasio gini," kata Airlangga.</p>
+                        <p class="bbc-text">Selain itu, pemerintah juga melanjutkan pembebasan PPh Pasal 21 bagi karyawan dengan gaji di bawah Rp 10 juta per bulan. Program tersebut juga diharapkan menekan tingkat rasio gini dan mempersempit ketimpangan.</p>
+                        <p class="bbc-text" style="margin-top: 30px; font-size: 14px; color: #505050; border-top: 1px solid #ccc; padding-top: 15px;">Tulisan ini adalah seri kedua laporan BBC News Indonesia terkait dua tahun pemerintahan Prabowo Subianto dan Wakil Presiden Gibran Rakabuming Raka.</p>
+                    </div>
+                </div>
+                
+                <div class="safari-bottom-bar">
+                    <button class="safari-bottom-btn disabled">
+                        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                    </button>
+                    <button class="safari-bottom-btn disabled">
+                        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                    </button>
+                    <button class="safari-bottom-btn">
+                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    </button>
+                    <button class="safari-bottom-btn">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    </button>
+                    <button class="safari-bottom-btn">
+                        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                    </button>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeSafariApp()"></div>
+            </div>
+
+            <!-- NOTES APP -->
+            <div class="notes-app" id="notesApp">
+                <div class="notes-header">
+                    <button class="notes-header-btn">Edit</button>
+                    <div class="notes-header-title">Notes</div>
+                    <button class="notes-header-btn">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </button>
+                </div>
+                <div class="notes-list" id="notesList">
+                    <!-- Notes will be injected here -->
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNotesApp()"></div>
+            </div>
+
+            <!-- NOTE DETAIL VIEW -->
+            <div class="note-detail" id="noteDetail">
+                <div class="note-detail-header">
+                    <button class="note-detail-back" onclick="closeNoteDetail()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
+                        Notes
+                    </button>
+                    <button class="note-detail-share">
+                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    </button>
+                </div>
+                <div class="note-detail-content">
+                    <div class="note-detail-title" id="noteDetailTitle"></div>
+                    <div class="note-detail-date" id="noteDetailDate"></div>
+                    <div class="note-detail-body" id="noteDetailBody"></div>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(0,0,0,0.3);" onclick="closeNoteDetail()"></div>
+            </div>
+
+            <!-- PHOTO VIEWER -->
+            <div class="photo-viewer" id="photoViewer">
+                <div class="viewer-top-bar">
+                    <button class="viewer-back-btn" onclick="closePhotoViewer()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#0a84ff"><path d="M10 2L2 10l8 8"/></svg>
+                        Photos
+                    </button>
+                    <div class="viewer-top-actions">
+                        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    </div>
+                </div>
+                <img class="viewer-image" id="viewerImage" src="" alt="Photo">
+                <div class="viewer-bottom-bar">
+                    <svg viewBox="0 0 24 24"><path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zm-9-1a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </div>
+                <div class="home-indicator" style="position:absolute; bottom:8px; background:rgba(255,255,255,0.5);" onclick="closePhotoViewer()"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NOTES_DATA = [
+            {
+                title: "shampoo buat ngembangin rambut",
+                content: "dari twitter\n\nmarsha oshi = aku? jadi duta shampoo lain???\nbass = udah lebat banget katanya\nara = diane, varian sesuai kebutuhan\nmaarukyuu  = lepas extension kah??\npandu = tanya ekin\nkalkunsenang =\n1. Rosemary Oil & Minyak kemiri bakar (selang seling aja pakenya)\n3. Hair growth shampoo (aku selang seling miranda sm kerastase)\n4. Absolut repair serum l’oreal\n5. Kerastase genesis serum\n(mana nomor 2 nya wkwk)",
+                date: "Oct 21, 2026"
+            },
+            {
+                title: "situs manga online",
+                content: "comix mangadot atsumaru mangaball mangafire weebcentral mangago onisaga toonkotsu",
+                date: "Oct 20, 2026"
+            },
+            {
+                title: "marah besar",
+                content: "1.nachia\n3.messi\n3.ka indah\nSIAPA LAGI YANG MAU SAKITIN DEDEK",
+                date: "Oct 19, 2026"
+            },
+            {
+                title: "cara mindahin foto dari digicam",
+                content: "gimana ya wkwkwk",
+                date: "Oct 18, 2026"
+            }
+        ];
+
+        const SETTINGS = {
+            passcode: "0109",
+            wallpaper: "images/wallpaper.jpg",
+            weather: { city: "Jakarta", temp: 31, description: "Mostly Sunny" },
+            
+            photos: [
+"https://pbs.twimg.com/media/HT3gNSTawAA9osk?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HS93NIWasAA_qhq?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HSY2PXGbcAAP3KB?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HSBO--fbEAEbLOP?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRwmss8bQAAO0o0?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRtL6nZbgAAKB2q?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRcNXK7bkAA_jMX?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRR9yK6aAAAN3yW?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRRrO4uaMAAcyQB?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HRJMgEIa4AApXXn?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HQ1FqnVa8AA2Eqn?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HQymw7AaMAAS_MD?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HQK9qKIbkAAN-6Q?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HPR70iybQAAGWDK?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HPMPRvdbcAAhUX9?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HPHh1awasAAFu_5?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HPDRXE9boAAGvSI?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HO3kXLsawAAMPFr?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HOEN4r6bMAAnIcb?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HNG0_G3aYAIeX0P?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HNGz8GHbwAApqb1?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HMwNETqbIAADiZf?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HMuDj2pbgAA0Mnj?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HMpO3x4boAAy3li?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HMEr6V9W0AAnGZ9?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HLwO9-bbgAI4eT9?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HKtcem1asAE1_Zz?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HJppBIhbwAEDNZb?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HJe0_tmbgAAmsaC?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HJEoWMiaQAAPfbW?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HImK9BXa8AAVZ0l?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HIIQNDqacAAc4dZ?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HHO8_wMaAAA-lzD?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HHMcDIBawAAvd9E?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGwxYbNbgAA5EhE?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGgXTqmbMAAnbqw?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGbZ5RWbgAA_5rJ?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGUHnNcagAItMme?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGLM-Q6bUAAcfp-?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HGKmsKpboAAX0s4?format=jpg&name=4096x4096",
+"https://pbs.twimg.com/media/HF12mjNasAALy7k?format=jpg&name=4096x4096"
+            ],
+            
+            apps: [
+                { name: "WhatsApp", icon: "<img src='images/whatsapp.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "Gemini", icon: "<img src='images/gemini.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "gemini" },
+                { name: "Photos", icon: "<img src='images/photos.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "photos" },
+                { name: "Settings", icon: "<img src='images/settings.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "Notes", icon: "<img src='images/notes.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "notes" },
+                { name: "Calendar", icon: "", color: "white", badge: null, showDate: true },
+                { name: "X", icon: "<img src='images/x.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "Instagram", icon: "<img src='images/instagram.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null }
+            ],
+            dockApps: [
+                { name: "", icon: "<img src='images/phone.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "", icon: "<img src='images/messages.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "", icon: "<img src='images/camera.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null },
+                { name: "", icon: "<img src='images/safari.png' style='width:100%; height:100%; object-fit:cover;'>", color: "#25D366", badge: null, action: "safari" }
+            ]
+        };
+
+        let passcodeInput = "";
+        let swipeY = 0;
+        let isSwiping = false;
+
+        document.getElementById('wallpaperImg').src = SETTINGS.wallpaper;
+
+        function haptic(duration = 30) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+            document.getElementById('iphone').classList.add('vibrate');
+            setTimeout(() => document.getElementById('iphone').classList.remove('vibrate'), duration);
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            document.getElementById('status-time').textContent = timeStr;
+            document.getElementById('lock-time').textContent = timeStr;
+        }
+        setInterval(updateTime, 1000); 
+        updateTime();
+
+        function updateLockDate() {
+            const date = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('lock-date').textContent = date.toLocaleDateString('en-US', options);
+        }
+        updateLockDate();
+
+        const lockScreen = document.getElementById('lockScreen');
+        const wallpaper = document.getElementById('wallpaper');
+        
+        function handleSwipe(diff) {
+            if (diff > 100) { haptic(50); showPasscode(); } 
+            else { lockScreen.style.transform = ''; lockScreen.style.opacity = ''; }
+            isSwiping = false;
+        }
+
+        lockScreen.addEventListener('touchstart', e => { isSwiping = true; swipeY = e.touches[0].clientY; haptic(20); }, {passive: true});
+        lockScreen.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            const diff = swipeY - e.touches[0].clientY;
+            if (diff > 0) { lockScreen.style.transform = `translateY(-${Math.min(diff, 400)}px)`; lockScreen.style.opacity = 1 - (diff / 400); }
+        }, {passive: true});
+        lockScreen.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            const diff = swipeY - e.changedTouches[0].clientY;
+            handleSwipe(diff);
+        }, {passive: true});
+
+        lockScreen.addEventListener('mousedown', e => { isSwiping = true; swipeY = e.clientY; haptic(20); });
+        lockScreen.addEventListener('mousemove', e => {
+            if (!isSwiping) return;
+            const diff = swipeY - e.clientY;
+            if (diff > 0) { lockScreen.style.transform = `translateY(-${Math.min(diff, 400)}px)`; lockScreen.style.opacity = 1 - (diff / 400); }
+        });
+        lockScreen.addEventListener('mouseup', e => {
+            if (!isSwiping) return;
+            const diff = swipeY - e.clientY;
+            handleSwipe(diff);
+        });
+
+        document.getElementById('swipeText').addEventListener('click', () => { haptic(50); showPasscode(); });
+
+        function showPasscode() {
+            haptic(50);
+            wallpaper.classList.add('blurred');
+            lockScreen.classList.add('blurred');
+            document.getElementById('passcodeScreen').classList.add('active');
+            passcodeInput = ""; updateDots();
+        }
+
+        function cancelPasscode() {
+            haptic(50);
+            document.getElementById('passcodeScreen').classList.remove('active');
+            wallpaper.classList.remove('blurred');
+            lockScreen.classList.remove('blurred');
+            lockScreen.style.transform = ''; 
+            lockScreen.style.opacity = '';
+            passcodeInput = ""; updateDots();
+        }
+
+        function enterNumber(num) {
+            if (passcodeInput.length < 4) {
+                passcodeInput += num; haptic(30); updateDots();
+                if (passcodeInput.length === 4) setTimeout(checkPasscode, 300);
+            }
+        }
+
+        function deleteNumber() {
+            if (passcodeInput.length > 0) { passcodeInput = passcodeInput.slice(0, -1); haptic(30); updateDots(); }
+        }
+
+        function updateDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                dot.classList.toggle('filled', i <= passcodeInput.length);
+                dot.classList.remove('shake');
+            }
+            document.getElementById('deleteBtn').classList.toggle('active', passcodeInput.length > 0);
+        }
+
+        function checkPasscode() {
+            if (passcodeInput === SETTINGS.passcode) {
+                haptic([50, 30, 50]);
+                document.getElementById('passcodeScreen').classList.remove('active');
+                wallpaper.classList.remove('blurred');
+                lockScreen.classList.remove('blurred');
+                lockScreen.classList.add('hidden');
+                document.getElementById('homeScreen').classList.add('active');
+            } else {
+                haptic([100, 50, 100]);
+                document.querySelectorAll('.passcode-dot').forEach(dot => dot.classList.add('shake'));
+                setTimeout(() => { passcodeInput = ""; updateDots(); }, 400);
+            }
+        }
+
+        function goHome() {
+            haptic(30);
+            document.getElementById('homeScreen').classList.remove('active');
+            document.getElementById('photosApp').classList.remove('active');
+            document.getElementById('geminiApp').classList.remove('active');
+            document.getElementById('safariApp').classList.remove('active');
+            document.getElementById('notesApp').classList.remove('active');
+            document.getElementById('noteDetail').classList.remove('active');
+            document.getElementById('photoViewer').classList.remove('active');
+            lockScreen.classList.remove('hidden');
+            document.getElementById('passcodeScreen').classList.remove('active');
+            wallpaper.classList.remove('blurred');
+            lockScreen.classList.remove('blurred');
+            passcodeInput = ""; updateDots();
+        }
+
+        function handleHomeClick() {
+            if (!lockScreen.classList.contains('hidden')) { haptic(50); showPasscode(); }
+        }
+
+        // ============ PHOTOS APP FUNCTIONS ============
+        function openPhotosApp() {
+            haptic(50);
+            document.getElementById('photosApp').classList.add('active');
+            loadPhotos();
+        }
+
+        function closePhotosApp() {
+            haptic(30);
+            document.getElementById('photosApp').classList.remove('active');
+        }
+
+        function loadPhotos() {
+            const now = new Date();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('photosSectionHeader').textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+            const grid = document.getElementById('photosGrid');
+            grid.innerHTML = '';
+            SETTINGS.photos.forEach((photo) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'photo-thumb';
+                thumb.style.backgroundImage = `url('${photo}')`;
+                thumb.onclick = () => openPhotoViewer(photo);
+                grid.appendChild(thumb);
+            });
+        }
+
+        function openPhotoViewer(photoSrc) {
+            haptic(30);
+            document.getElementById('viewerImage').src = photoSrc;
+            document.getElementById('photoViewer').classList.add('active');
+        }
+
+        function closePhotoViewer() {
+            haptic(30);
+            document.getElementById('photoViewer').classList.remove('active');
+        }
+
+        // ============ GEMINI APP FUNCTIONS ============
+        function openGeminiApp() {
+            haptic(50);
+            document.getElementById('geminiApp').classList.add('active');
+            setTimeout(() => {
+                const chat = document.querySelector('.gemini-chat');
+                chat.scrollTop = chat.scrollHeight;
+            }, 450);
+        }
+
+        function closeGeminiApp() {
+            haptic(30);
+            document.getElementById('geminiApp').classList.remove('active');
+        }
+
+        // ============ SAFARI APP FUNCTIONS ============
+        function openSafariApp() {
+            haptic(50);
+            document.getElementById('safariApp').classList.add('active');
+        }
+
+        function closeSafariApp() {
+            haptic(30);
+            document.getElementById('safariApp').classList.remove('active');
+        }
+
+        // ============ NOTES APP FUNCTIONS ============
+        function openNotesApp() {
+            haptic(50);
+            document.getElementById('notesApp').classList.add('active');
+            loadNotesList();
+        }
+
+        function closeNotesApp() {
+            haptic(30);
+            document.getElementById('notesApp').classList.remove('active');
+            document.getElementById('noteDetail').classList.remove('active');
+        }
+
+        function loadNotesList() {
+            const list = document.getElementById('notesList');
+            list.innerHTML = '';
+            NOTES_DATA.forEach((note, index) => {
+                const item = document.createElement('div');
+                item.className = 'note-item';
+                item.onclick = () => openNoteDetail(index);
+                
+                const snippet = note.content.split('\n')[0] + (note.content.includes('\n') ? '...' : '');
+                
+                item.innerHTML = `
+                    <div class="note-item-content">
+                        <div class="note-item-title">${note.title}</div>
+                        <div class="note-item-snippet">${snippet}</div>
+                    </div>
+                    <div class="note-item-date">${note.date}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function openNoteDetail(index) {
+            haptic(30);
+            const note = NOTES_DATA[index];
+            document.getElementById('noteDetailTitle').textContent = note.title;
+            document.getElementById('noteDetailDate').textContent = note.date;
+            document.getElementById('noteDetailBody').textContent = note.content;
+            document.getElementById('noteDetail').classList.add('active');
+        }
+
+        function closeNoteDetail() {
+            haptic(30);
+            document.getElementById('noteDetail').classList.remove('active');
+        }
+
+        function generateCalendar() {
+            const date = new Date();
+            const year = date.getFullYear(), month = date.getMonth(), today = date.getDate();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('cal-month').textContent = monthNames[month];
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            let html = '';
+            ["S","M","T","W","T","F","S"].forEach(d => html += `<div class="cal-day-name">${d}</div>`);
+            for (let i = firstDay - 1; i >= 0; i--) html += `<div class="cal-day" style="color:#c7c7cc">${daysInPrevMonth - i}</div>`;
+            for (let i = 1; i <= daysInMonth; i++) html += `<div class="cal-day ${i === today ? 'today' : ''}">${i}</div>`;
+            const totalCells = firstDay + daysInMonth;
+            for (let i = 1; i <= 42 - totalCells; i++) html += `<div class="cal-day" style="color:#c7c7cc">${i}</div>`;
+            document.getElementById('cal-grid').innerHTML = html;
+        }
+
+        function generateApps() {
+            const appGrid = document.getElementById('app-grid');
+            const dock = document.getElementById('dock');
+            
+            const createAppHTML = (app) => {
+                let iconContent = app.icon;
+                if (app.showDate) {
+                    const today = new Date().getDate();
+                    const dayName = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+                    iconContent = `<div style="text-align:center; color:#000;"><div style="font-size:10px; color:#ff3b30; font-weight:600;">${dayName}</div><div style="font-size:24px; font-weight:600;">${today}</div></div>`;
+                }
+                const badge = app.badge ? `<div class="app-badge">${app.badge}</div>` : '';
+                
+                let clickHandler = `haptic(50); alert('Opening ${app.name}...')`;
+                if (app.action === 'photos') {
+                    clickHandler = 'openPhotosApp()';
+                } else if (app.action === 'gemini') {
+                    clickHandler = 'openGeminiApp()';
+                } else if (app.action === 'safari') {
+                    clickHandler = 'openSafariApp()';
+                } else if (app.action === 'notes') {
+                    clickHandler = 'openNotesApp()';
+                }
+                
+                return `<div class="app" onclick="${clickHandler}">
+                    <div class="app-icon" style="background: ${app.color}">${badge}${iconContent}</div>
+                    <div class="app-name">${app.name}</div>
+                </div>`;
+            };
+
+            appGrid.innerHTML = SETTINGS.apps.map(createAppHTML).join('');
+            dock.innerHTML = SETTINGS.dockApps.map(createAppHTML).join('');
+        }
+
+        generateCalendar();
+        generateApps();
+    </script>
+</body>
+</html>
