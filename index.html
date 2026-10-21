@@ -61,7 +61,7 @@
     .dock .app-icon { width: 15vw; height: 15vw; }
     .home-indicator { width: 35vw; }
     .status-bar { padding: 16px 20px 0; }
-    
+
     /* MOBILE FULLSCREEN FIX */
 @media screen and (max-width: 480px) {
     body {
@@ -89,6 +89,41 @@
     .notch {
         display: none !important; /* Hides the fake notch */
     }
+}
+/* MOBILE FULLSCREEN FIX */
+@media screen and (max-width: 480px) {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #000 !important;
+        overflow: hidden !important;
+        width: 100% !important;
+        height: 100% !important;
+        touch-action: none !important; /* Prevents browser zooming/scrolling */
+    }
+
+    .iphone-frame {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        transform: none !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .iphone {
+        width: 390px !important;
+        height: 844px !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        /* Scales the entire phone UI to fit perfectly within the mobile screen */
+        transform: scale(calc(min(100vw / 390, 100vh / 844))) !important;
+        transform-origin: center center !important;
+    }
+
+    .notch { display: none !important; }
 }
 }
 
