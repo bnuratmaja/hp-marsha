@@ -24,17 +24,25 @@
             transform-origin: center center;
         }
 
-        /* PERFECT MOBILE FIT */
+        /* PERFECT MOBILE FIT - Scales the phone to fit any screen */
         @media (max-width: 450px) {
-            body { background: #000; margin: 0; padding: 0; overflow: hidden; }
-            .iphone-frame { transform: none; }
+            body { 
+                background: #000; 
+                margin: 0; padding: 0; 
+                overflow: hidden; 
+                width: 100vw; 
+                height: 100vh; 
+                height: 100dvh;
+            }
+            .iphone-frame {
+                position: absolute;
+                top: 50%; left: 50%;
+                /* Mathematically scales the 390x844 phone to fit the screen perfectly */
+                transform: translate(-50%, -50%) scale(min(100vw / 390, 100dvh / 844));
+                transform-origin: center center;
+            }
             .iphone {
-                /* Mathematically fits the 390x844 aspect ratio into any mobile screen */
-                width: min(100vw, 100dvh * (390/844));
-                height: min(100dvh, 100vw * (844/390));
-                border-radius: 0;
-                border: none;
-                box-shadow: none;
+                border-radius: 0; border: none; box-shadow: none;
             }
             .notch { display: none; }
         }
@@ -242,7 +250,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 700;
             display: flex; flex-direction: column;
-            transform: translateY(100%) scale(0.95); /* Slight scale for iOS feel */
+            transform: translateY(100%) scale(0.95);
             transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
             overflow: hidden;
             color: #000;
@@ -470,7 +478,7 @@
         }
         .notes-header-btn {
             background: none; border: none; color: #007AFF; font-size: 17px;
-            cursor: pointer; font-weight: 400;
+            cursor: pointer; font-weight: 400; display: flex; align-items: center; gap: 4px;
         }
         .notes-header-btn:active { opacity: 0.6; }
         .notes-header-title { font-size: 17px; font-weight: 600; color: #000; }
@@ -587,12 +595,12 @@
                 <div class="status-icons">
                     <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1" opacity="0.3"/></svg>
                     <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/><path d="M8 6a5.5 5.5 0 00-5.5 5.5h2A3.5 3.5 0 018 8a3.5 3.5 0 013.5 3.5h2A5.5 5.5 0 008 6z"/><path d="M8 2.5a9 9 0 00-9 9h2a7 7 0 017-7 7 7 0 017 7h2a9 9 0 00-9-9z"/></svg>
-                    <!-- ORANGE 48% BATTERY -->
-                    <span style="font-size: 13px; font-weight: 600; color: #FF9F0A; margin-right: 2px;">48</span>
-                    <svg width="25" height="12" viewBox="0 0 25 12">
-                        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#FF9F0A" fill="none" stroke-width="1"/>
-                        <rect x="2.5" y="2.5" width="9" height="7" rx="2" fill="#FF9F0A"/>
-                        <path d="M23 4v4" stroke="#FF9F0A" stroke-width="1.5" stroke-linecap="round"/>
+                    <!-- BATTERY WITH PERCENTAGE INSIDE -->
+                    <svg width="28" height="13" viewBox="0 0 28 13">
+                        <rect x="0.5" y="0.5" width="24" height="12" rx="3.5" stroke="#FF9F0A" fill="none" stroke-width="1"/>
+                        <rect x="2.5" y="2.5" width="10" height="8" rx="2" fill="#FF9F0A"/>
+                        <path d="M26 4.5v4" stroke="#FF9F0A" stroke-width="1.5" stroke-linecap="round"/>
+                        <text x="13" y="9.5" font-size="7.5" font-weight="700" fill="#FF9F0A" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, sans-serif">48</text>
                     </svg>
                 </div>
             </div>
@@ -786,6 +794,10 @@
                         <div class="bbc-logo">BBC NEWS</div>
                         <h1 class="bbc-headline">Dua tahun Prabowo-Gibran – Warga terpaksa 'downgrade' hidup, untuk makan saja pas-pasan</h1>
                         <div class="bbc-meta">
+
+<img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/37f6/live/cdbba8c0-cc25-11f1-9d70-0383759c5299.jpg" class="bbc-image" alt="BBC Image">
+
+
                             <strong>Riana A Ibrahim</strong><br>
                             Peranan, Jurnalis BBC News Indonesia<br>
                             Telah diterbitkan<br>
@@ -920,7 +932,11 @@
             <!-- NOTES APP -->
             <div class="notes-app" id="notesApp">
                 <div class="notes-header">
-                    <button class="notes-header-btn">Edit</button>
+                    <!-- CHANGED TO HOME BUTTON -->
+                    <button class="notes-header-btn" onclick="goHome()">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
+                        Home
+                    </button>
                     <div class="notes-header-title">Notes</div>
                     <button class="notes-header-btn">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="#007AFF"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
@@ -934,9 +950,10 @@
             <!-- NOTE DETAIL VIEW -->
             <div class="note-detail" id="noteDetail">
                 <div class="note-detail-header">
-                    <button class="note-detail-back" onclick="goHome()">
+                    <!-- CHANGED TO BACK BUTTON -->
+                    <button class="note-detail-back" onclick="closeNoteDetail()">
                         <svg width="12" height="20" viewBox="0 0 12 20" fill="#007AFF"><path d="M10 2L2 10l8 8"/></svg>
-                        Home
+                        Back
                     </button>
                     <button class="note-detail-share">
                         <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
@@ -1179,7 +1196,6 @@
             }
         }
 
-        // GOES TO HOME SCREEN, NOT LOCK SCREEN
         function goHome() {
             haptic(30);
             document.getElementById('photosApp').classList.remove('active');
@@ -1190,7 +1206,7 @@
             document.getElementById('photoViewer').classList.remove('active');
             
             document.getElementById('homeScreen').classList.add('active');
-            lockScreen.classList.add('hidden'); // Keep lock screen hidden
+            lockScreen.classList.add('hidden');
             wallpaper.classList.remove('blurred');
             lockScreen.classList.remove('blurred');
             document.getElementById('passcodeScreen').classList.remove('active');
@@ -1200,7 +1216,6 @@
             if (!lockScreen.classList.contains('hidden')) { haptic(50); showPasscode(); }
         }
 
-        // ============ PHOTOS APP FUNCTIONS ============
         function openPhotosApp() {
             haptic(50);
             document.getElementById('photosApp').classList.add('active');
@@ -1234,7 +1249,6 @@
             document.getElementById('photoViewer').classList.remove('active');
         }
 
-        // ============ GEMINI APP FUNCTIONS ============
         function openGeminiApp() {
             haptic(50);
             document.getElementById('geminiApp').classList.add('active');
@@ -1244,17 +1258,21 @@
             }, 450);
         }
 
-        // ============ SAFARI APP FUNCTIONS ============
         function openSafariApp() {
             haptic(50);
             document.getElementById('safariApp').classList.add('active');
         }
 
-        // ============ NOTES APP FUNCTIONS ============
         function openNotesApp() {
             haptic(50);
             document.getElementById('notesApp').classList.add('active');
             loadNotesList();
+        }
+
+        // ADDED FUNCTION TO GO BACK TO NOTES LIST
+        function closeNoteDetail() {
+            haptic(30);
+            document.getElementById('noteDetail').classList.remove('active');
         }
 
         function loadNotesList() {
